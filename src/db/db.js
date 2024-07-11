@@ -41,5 +41,12 @@ const localRides = [
 ];
 
 const categories = ["City", "Airport", "Hourly", "Long Distance", "Specials"];
+const options=[
+    "Book a Ride",
+    "View Previous Bookings",
+    "Contact Customer Support",
+  ]
 
-export {topRides, localRides, categories};
+  const vehicles=["Sedan","SUV","Minivan"]
+
+export {topRides, localRides, categories, options,vehicles};

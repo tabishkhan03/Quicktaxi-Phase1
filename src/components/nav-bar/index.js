@@ -1,4 +1,5 @@
 import { FaTaxi } from "react-icons/fa";
+
 function Navbar() {
   return (
     <div className="flex items-center p-4 bg-blue-500  text-white justify-between">

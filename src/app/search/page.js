@@ -1,6 +1,6 @@
 import Navbar from "@/components/nav-bar";
 
-
+import {vehicles} from '@/db/db'
 function SearchPage() {
   return (
     <div className="min-h-screen ">
@@ -50,7 +50,7 @@ function SearchPage() {
           <div className="mb-4">
             <p className="text-xl font-bold mb-2">Select Vehicle Type</p>
             <div className="flex space-x-4">
-             { ["Sedan","SUV","Minivan"].map((Vehicle)=>(
+             { vehicles.map((Vehicle)=>(
               <button
               key={Vehicle}
                className="p-2 bg-white text-black border-2 border-gray-800 rounded-md font-bold hover:bg-teal-900 hover:text-white focus:ring focus:ring-violet-300 focus:bg-teal-900 focus:text-white">
