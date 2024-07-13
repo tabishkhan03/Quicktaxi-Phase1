@@ -12,6 +12,7 @@ function Sign() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error ,setError]=useState();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -70,6 +71,7 @@ function Sign() {
               <div className="checkbox-wrapper relative inline-block w-8 h-8">
   <input
     type="checkbox"
+    required
     className="absolute w-full h-full left-0 top-0 m-0 opacity-0 appearance-none"
   />
   <svg viewBox="0 0 35.6 35.6">
@@ -100,7 +102,7 @@ function Sign() {
             </div>
             <Link
               href="/home-new"
-              className="flex items-center gap-2 mt-6 px-4 py-2 bg-yellow-500 rounded-full hover:bg-yellow-600 font-semibold justify-center"
+              className="flex items-center gap-2 mt-6 px-4 py-2 bg-yellow-400 rounded-full hover:bg-yellow-500 font-semibold justify-center"
             >
               <span className="ml-auto text-lg">Sign Up</span>
               <FaArrowRight className=" border p-2 bg-white rounded-full w-12 h-12 text-right ml-auto border-black" />
@@ -108,8 +110,8 @@ function Sign() {
             </Link>
             <p className="font-bold text-center">Or continue with</p>
             <div className="flex gap-12 justify-center">
-              <FcGoogle className="text-2xl border p-2 bg-white rounded-full w-12 h-12 shadow-lg shadow-indigo-500/40" />
-              <FaApple className="text-2xl border p-2 bg-white rounded-full w-12 h-12 text-center shadow-lg shadow-indigo-500/40" />
+              <FcGoogle className="text-2xl border p-2 bg-white rounded-full w-12 h-12 shadow-lg shadow-indigo-500/40 cursor-pointer" />
+              <FaApple className="text-2xl border p-2 bg-white rounded-full w-12 h-12 text-center shadow-lg shadow-indigo-500/40 cursor-pointer" />
             </div>
             <p className="font-bold mt-8 text-center">
              Already have an Account?{' '}
