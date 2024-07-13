@@ -3,138 +3,84 @@ import { FaCircleDot } from "react-icons/fa6";
 import { FaRegClock } from "react-icons/fa";
 import { GrLocation } from "react-icons/gr";
 import { RxCross1 } from "react-icons/rx";
-import { SourceDestination } from "../../context/SourceDestination";
-import { SourceLocation } from "../../context/SourceLoation";
+import { AppContext } from "../../context/AppContext";
+
 
 const Autocomplete = () => {
-  const [location, setLocation] = useState();
-  const [address, setAddress] = useState([]);
-  const [location1, setLocation1] = useState();
-  const [address1, setAddress1] = useState([]);
+  const [sourceQuery, setSourceQuery] = useState("");
+  const [destinationQuery, setDestinationQuery] = useState("");
+  const [sourceResults, setSourceResults] = useState([]);
+  const [destinationResults, setDestinationResults] = useState([]);
 
-  const{sourcelocation, setSourcelocation} = useContext(SourceLocation)
-  const {destinationlocation, setDestinationlocation} = useContext(SourceDestination)
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      getAdderess();
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [location]);
+  const { state, dispatch } = useContext(AppContext);
+  const { sourceLocation, destinationLocation } = state;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      getAdderess1();
-    }, 1000);
+    if (sourceQuery) {
+      const timer = setTimeout(() => {
+        fetchLocations(sourceQuery, setSourceResults);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setSourceResults([]);
+    }
+  }, [sourceQuery]);
 
-    return () => clearTimeout(timer);
-  }, [location1]);
+  useEffect(() => {
+    if (destinationQuery) {
+      const timer = setTimeout(() => {
+        fetchLocations(destinationQuery, setDestinationResults);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else {
+      setDestinationResults([]);
+    }
+  }, [destinationQuery]);
 
-  const getAdderess = async () => {
-    const res = await fetch(
-      "https://api.mapbox.com/geocoding/v5/mapbox.places/"+location+".json?proximity=ip&types=address%2Cdistrict%2Ccountry&access_token=pk.eyJ1IjoicGF3YW4tc2luZ2giLCJhIjoiY2x5OG04czlhMGs3MzJqczdqZTQxdzdkMCJ9.9hJYde5isDb9oy7qQbI62g",
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const result = await res.json();
-    setAddress(result);
-  };
-  const getAdderess1 = async () => {
-    const res = await fetch(
-        "https://api.mapbox.com/geocoding/v5/mapbox.places/"+location1+".json?proximity=ip&types=address%2Cdistrict%2Ccountry&access_token=pk.eyJ1IjoicGF3YW4tc2luZ2giLCJhIjoiY2x5OG04czlhMGs3MzJqczdqZTQxdzdkMCJ9.9hJYde5isDb9oy7qQbI62g",
-
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const result = await res.json();
-    setAddress1(result);
-  };
-
-
-
-  const handledel = () => {
-    setLocation("");
-    setAddress([]);
-    setLocation1("");
-    setAddress1([]);
-    // sourcelocation(null)
-    // destinationlocation(null)
-   
+  const fetchLocations = async (query, setResults) => {
+    try {
+      const res = await fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?proximity=ip&types=address%2Cdistrict%2Ccountry&access_token=pk.eyJ1IjoibWFudml0aDUwNyIsImEiOiJjbHk4YTl1ejEwaDg2MnFxcGN6dnBpYmxjIn0.MYmf_2NaYmcEnQHhQWjhFA`
+      );
+      const result = await res.json();
+      setResults(result.features || []);
+    } catch (error) {
+      console.error("Error fetching locations:", error);
+    }
   };
 
-
-  const onSourceLocationChange = async(item)=>{
-    setLocation(item.place_name);
-    setAddress([]);
-    setLocation1("")
-
-    const response = await fetch("https://api.mapbox.com/geocoding/v5/mapbox.places/"+location+".json?proximity=ip&types=address%2Cdistrict%2Ccountry&access_token=pk.eyJ1IjoicGF3YW4tc2luZ2giLCJhIjoiY2x5OG04czlhMGs3MzJqczdqZTQxdzdkMCJ9.9hJYde5isDb9oy7qQbI62g",{
-        headers: {
-          "Content-Type": "application/json",
-        },
-  
-    })
-    const result = await response.json();
-    setSourcelocation({
-        lng: result.features[0].geometry.coordinates [0],
-        lat: result.features[0].geometry.coordinates[1],
-        
-  
+  const handleSourceLocationSelect = (item) => {
+    setSourceQuery(item.place_name);
+    setSourceResults([]);
+    dispatch({
+      type: "SET_SOURCE_LOCATION",
+      payload: {
+        lng: item.geometry.coordinates[0],
+        lat: item.geometry.coordinates[1],
+      },
     });
-   
+  };
 
-
-
-  }
-
-
-  const onDestinationLocationChange = async(item)=>{
-    setLocation1(item.place_name);
-    setAddress1([]);
-    const response = await fetch("https://api.mapbox.com/geocoding/v5/mapbox.places/"+location1+".json?proximity=ip&types=address%2Cdistrict%2Ccountry&access_token=pk.eyJ1IjoicGF3YW4tc2luZ2giLCJhIjoiY2x5OG04czlhMGs3MzJqczdqZTQxdzdkMCJ9.9hJYde5isDb9oy7qQbI62g",{
-        headers: {
-          "Content-Type": "application/json",
-        },
-  
-    })
-    const result = await response.json();
-    setDestinationlocation({
-        lng: result.features[0].geometry.coordinates [0],
-        lat: result.features[0].geometry.coordinates[1],
-        
-  
+  const handleDestinationLocationSelect = (item) => {
+    setDestinationQuery(item.place_name);
+    setDestinationResults([]);
+    dispatch({
+      type: "SET_DESTINATION_LOCATION",
+      payload: {
+        lng: item.geometry.coordinates[0],
+        lat: item.geometry.coordinates[1],
+      },
     });
-    
+  };
 
-  }
-   
-
-  console.log(sourcelocation)
-  console.log(destinationlocation)
-
-
-  const handlelocat=(e)=>{
-    setLocation(e.target.value)
-    
-   
-
-  }    
-  const handlelocat1=(e)=>{
-    setLocation1(e.target.value)
-   
-
-
-  
-
-  }    
-    
+  const clearLocations = () => {
+    setSourceQuery("");
+    setDestinationQuery("");
+    setSourceResults([]);
+    setDestinationResults([]);
+    dispatch({ type: "SET_SOURCE_LOCATION", payload: null });
+    dispatch({ type: "SET_DESTINATION_LOCATION", payload: null });
+  };
 
   return (
     <div className="bg-slate-50 p-2 rounded-2xl">
@@ -142,71 +88,66 @@ const Autocomplete = () => {
         <div>
           <FaCircleDot size={25} className="text-yellow-400" />
         </div>
-        <div className=" relative">
+        <div className="relative">
           <input
             type="text"
             placeholder="Search for places"
-            value={location}
-            onChange={handlelocat}
+            value={sourceQuery}
+            onChange={(e) => setSourceQuery(e.target.value)}
             className="text-lg p-1 outline-0 bg-slate-50"
           />
-          {address?.features ? (
-            <div className="  absolute z-40 bg-white p-1">
-              {address?.features.map((item) => (
+          {sourceResults.length > 0 && (
+            <div className="absolute z-40 bg-white p-1">
+              {sourceResults.map((item) => (
                 <div
                   key={item.id}
-                  onClick={() => {
-                    onSourceLocationChange(item)
-                  }}
+                  onClick={() => handleSourceLocationSelect(item)}
+                  className="p-1 cursor-pointer"
                 >
-                  <h1 className="p-1 cursor-pointer">{item.place_name}</h1>
+                  {item.place_name}
                   <hr />
                 </div>
               ))}
             </div>
-          ) : null}
+          )}
         </div>
-        <div className="">
-          <FaRegClock
-            size={35}
-            className="bg-yellow-400 p-1 text-white rounded-lg "
-          />
+        <div>
+          <FaRegClock size={35} className="bg-yellow-400 p-1 text-white rounded-lg" />
         </div>
       </div>
-      <hr className="mt-1 mb-1 " />
+      <hr className="mt-1 mb-1" />
       <div className="flex items-center gap-6">
         <div>
-          <GrLocation size={28} className="text-green-500 " />
+          <GrLocation size={28} className="text-green-500" />
         </div>
-        <div className=" relative">
+        <div className="relative">
           <input
             type="text"
             placeholder="Select your location"
-            value={location1}
-            onChange={handlelocat1}
-            className="text-lg p-1 outline-0 bg-slate-50 w-full "
+            value={destinationQuery}
+            onChange={(e) => setDestinationQuery(e.target.value)}
+            className="text-lg p-1 outline-0 bg-slate-50 w-full"
           />
-          {address1?.features ? (
-            <div className="  absolute left-0 top-11 bg-white p-1.5 rounded-xl">
-              {address1?.features.map((item) => (
+          {destinationResults.length > 0 && (
+            <div className="absolute left-0 top-11 bg-white p-1.5 rounded-xl">
+              {destinationResults.map((item) => (
                 <div
                   key={item.id}
-                  onClick={() => {
-                   onDestinationLocationChange(item)
-                  }}
+                  onClick={() => handleDestinationLocationSelect(item)}
+                  className="p-1 cursor-pointer"
                 >
-                  <h1 className="p-1 cursor-pointer">{item.place_name}</h1>
+                  {item.place_name}
                   <hr />
                 </div>
               ))}
             </div>
-          ) : null}
+          )}
         </div>
         <div>
           <RxCross1
-            onClick={handledel}
+            onClick={clearLocations}
             size={30}
-            className="bg-orange-500 text-white rounded-3xl p-2"
+            className="bg-orange-500 text-white rounded-3xl p-2 cursor-pointer"
           />
         </div>
       </div>
@@ -215,3 +156,4 @@ const Autocomplete = () => {
 };
 
 export default Autocomplete;
+
