@@ -16,7 +16,7 @@ const Signin = () => {
         <form className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              Email / Contact
+              Email / Contact  
             </label>
             <div className="mt-1 text-black">
               <input
