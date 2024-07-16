@@ -32,13 +32,20 @@ const HomeDriverPage = () => {
     setToggle(!toggle);
   };
 
-  const handleFindRide = () => {
+  const handleFindRide = async () => {
     setLoading(true);
-    // backend request
-    setTimeout(() => {
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/trips/ready-trips"
+      );
+      const data = await response.json();
       setLoading(false);
-      // Handle the response
-    }, 3000); // 3-second delay
+      // Handle the response (e.g., show the ride found, handle errors, etc.)
+      console.log(data); // You can update the state with this data as needed
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching ready trips:", error);
+    }
   };
 
   return (
@@ -76,7 +83,7 @@ const HomeDriverPage = () => {
           </span>
         </label>
       </div>
-      <YellowButton onClick={handleFindRide} />
+      <YellowButton text="Find Ride" onClick={handleFindRide} />
     </div>
   );
 };

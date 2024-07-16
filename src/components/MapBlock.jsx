@@ -11,7 +11,8 @@ import Routes from "./map/Routes";
 const Home = () => {
   const mapRef = useRef(null);
   const { state, dispatch } = useContext(AppContext);
-  const { userLocation, sourceLocation, destinationLocation, direction } = state;
+  const { userLocation, sourceLocation, destinationLocation, direction } =
+    state;
 
   useEffect(() => {
     if (userLocation?.lng && userLocation?.lat) {
@@ -37,13 +38,13 @@ const Home = () => {
         center: [destinationLocation.lng, destinationLocation.lat],
         duration: 2500,
       });
-  
+
       if (sourceLocation && destinationLocation) {
         getDirection();
       }
     } else {
       // Clear the direction or route state if destinationLocation is null or undefined
-      dispatch({ type: 'SET_DIRECTION', payload: null });
+      dispatch({ type: "SET_DIRECTION", payload: null });
     }
   }, [destinationLocation, sourceLocation]);
 
@@ -57,7 +58,7 @@ const Home = () => {
       }
     );
     const result = await res.json();
-    dispatch({ type: 'SET_DIRECTION', payload: result });
+    dispatch({ type: "SET_DIRECTION", payload: result });
   };
 
   return (
@@ -74,11 +75,12 @@ const Home = () => {
         mapStyle="mapbox://styles/mapbox/streets-v9"
       >
         <Markers />
-        {direction?.routes && <Routes coordinates={direction.routes[0].geometry.coordinates} />}
+        {direction?.routes && (
+          <Routes coordinates={direction.routes[0].geometry.coordinates} />
+        )}
       </Map>
     </div>
   );
 };
 
 export default Home;
-
