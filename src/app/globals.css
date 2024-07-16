@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -66,3 +66,26 @@ body {
   transition: stroke-dashoffset 0.6s ease;
 }
 
+/* This part is of drivers searching a ride animation can be used for customers side as well */
+
+@keyframes dots {
+  0%,
+  20% {
+    content: "";
+  }
+  40% {
+    content: ".";
+  }
+  60% {
+    content: "..";
+  }
+  80%,
+  100% {
+    content: "...";
+  }
+}
+
+.animate-dots::after {
+  content: "";
+  animation: dots 1s steps(1, end) infinite;
+}
