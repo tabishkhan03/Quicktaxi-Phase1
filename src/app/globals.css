@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
@@ -14,6 +16,11 @@
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
+} */
+
+* {
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
 }
 
 body {
@@ -31,3 +38,31 @@ body {
     text-wrap: balance;
   }
 }
+/* styles.css */
+.input-placeholder-black-bold::placeholder {
+  @apply text-black font-semibold;
+}
+
+.checkbox-wrapper {
+  cursor: pointer;
+}
+
+.checkbox-wrapper:hover svg .background {
+  fill: #5ee71e;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked + svg .stroke {
+  stroke-dashoffset: 0;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked + svg .check {
+  stroke-dashoffset: 0;
+}
+
+.stroke,
+.check {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
