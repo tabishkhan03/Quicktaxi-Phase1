@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useContext, useState } from "react";
 import { AppContext, AppProvider } from "../../../context/AppContext";
-import { FaArrowLeft, FaUser } from "react-icons/fa";
+import { FaArrowLeft, FaUser, FaCalendarAlt, FaRupeeSign } from "react-icons/fa";
 import Link from "next/link";
 import MapBlock from "../../components/MapBlock";
 import YellowButton from "../../components/YellowButton";
@@ -12,7 +12,7 @@ const HomeDriverPage = () => {
   const { state, dispatch } = useContext(AppContext);
   const [toggle, setToggle] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [rideRequests, setRideRequests] = useState([]); // Initialize as an empty array
+  const [rideRequests, setRideRequests] = useState([]);
 
   const getUserLocation = () => {
     navigator.geolocation.getCurrentPosition((pos) => {
@@ -42,16 +42,16 @@ const HomeDriverPage = () => {
       );
       const data = await response.json();
       if (Array.isArray(data)) {
-        setRideRequests(data); // Update the state with the fetched data
+        setRideRequests(data);
       } else {
         console.error("Error: Fetched data is not an array", data);
-        setRideRequests([]); // Set an empty array to avoid mapping issues
+        setRideRequests([]);
       }
       setLoading(false);
     } catch (error) {
       setLoading(false);
       console.error("Error fetching ready trips:", error);
-      setRideRequests([]); // Set an empty array to avoid mapping issues
+      setRideRequests([]);
     }
   };
 
@@ -66,9 +66,12 @@ const HomeDriverPage = () => {
         >
           <FaArrowLeft className="text-black sm:text-3xl text-4xl" />
         </Link>
-        <div className="w-full p-3 mx-auto absolute top-16 left-0 flex flex-row items-center rounded-2xl bg-white">
-          <FaUser className="text-gray-700 text-3xl" />
-          <label className="ml-auto inline-flex items-center cursor-pointer">
+        <div className="w-full p-3 mx-auto absolute top-16 left-0 flex flex-row items-center justify-between bg-white">
+          <div className="flex items-center">
+            <FaUser className="text-gray-700 text-3xl" />
+            <span className="ml-2 font-semibold">Online</span>
+          </div>
+          <label className="inline-flex items-center cursor-pointer">
             <span className="relative">
               <input
                 type="checkbox"
@@ -89,7 +92,24 @@ const HomeDriverPage = () => {
             </span>
           </label>
         </div>
-        <div className="absolute bottom-20 left-0 right-0 p-4 space-y-4 max-h-[calc(1.5*theme(height.40))] overflow-y-auto custom-scrollbar bg-white pt-8 rounded-3xl">
+        <div className="absolute top-32 left-0 right-0 px-4 flex justify-between">
+          <div className="bg-white rounded-lg p-3 flex items-center">
+            <FaCalendarAlt className="text-gray-500 mr-2" />
+            <div>
+              <p className="text-sm text-gray-500">Pre-Booked</p>
+              <p className="font-bold">9</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-lg p-3 flex items-center">
+            <FaRupeeSign className="text-gray-500 mr-2" />
+            <div>
+              <p className="text-sm text-gray-500">Today Earned</p>
+              <p className="font-bold">₹1400.00</p>
+            </div>
+          </div>
+        </div>
+        <div className="absolute bottom-24 left-0 right-0 p-4 space-y-4 max-h-[calc(100vh-20rem)] overflow-y-auto custom-scrollbar bg-white pt-8 rounded-t-3xl">
+          <h2 className="text-xl font-semibold mb-4">Ride Request</h2>
           {rideRequests.length === 0 ? (
             <p className="text-center text-gray-500">
               There are no rides available nearby you.
@@ -115,6 +135,3 @@ const HomeDriverWrapper = () => (
 );
 
 export default HomeDriverWrapper;
-
-
-
