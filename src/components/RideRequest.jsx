@@ -28,7 +28,17 @@ const RideRequest = ({ request }) => {
       });
       if (response.status === 200) {
         alert("Trip accepted");
-        router.push("/navigation-driver");
+        const tripId = request.trip_id; 
+      const driverId = request.driver_id;
+        // router.push("/navigation-driver");
+        router.push(`/navigation-driver?trip_id=${tripId}&driver_id=${driverId}`);
+        // router.push({
+        //   pathname: '/navigation-driver',
+        //   query: { 
+        //     trip_id: request.trip_id, 
+        //     driver_id: request.driver_id 
+        //   },
+        // });
       } else {
         throw new Error("Failed to accept the trip");
       }
@@ -76,7 +86,7 @@ const RideRequest = ({ request }) => {
             </div>
             <div className="flex items-center">
               <FaRupeeSign className="mr-1" />
-              <span>289.00</span>
+              <span>{request.fare}</span>
             </div>
           </div>
 
@@ -86,7 +96,7 @@ const RideRequest = ({ request }) => {
                 <IoLocationSharp className="text-yellow-400 text-xl" />
               </div>
               <p className="text-sm text-gray-700 flex-1">
-                123 ABC Street,New Delhi, 110
+                {request.start_location}
               </p>
             </div>
             <div className="flex items-start">
@@ -94,7 +104,7 @@ const RideRequest = ({ request }) => {
                 <IoLocationSharp className="text-green-500 text-xl" />
               </div>
               <p className="text-sm text-gray-700 flex-1">
-                Indira Gandhi International Airport New...
+                {request.end_location}
               </p>
             </div>
           </div>
