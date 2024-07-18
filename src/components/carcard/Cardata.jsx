@@ -18,7 +18,8 @@ const Cardata = ({ setConfrim }) => {
   const { location } = useContext(Userloc);
   const { location1 } = useContext(Userdis);
   const [ready, setReady] = useState("Ready");
-  const {Tripid,setTripid}=useContext(Canceltrip);
+  const { Tripid, setTripid } = useContext(Canceltrip);
+  const [driverData, setDriverData] = useState([]);
 
   const getCost = (charge) => {
     if (direction && direction.routes && direction.routes.length > 0) {
@@ -48,41 +49,57 @@ const Cardata = ({ setConfrim }) => {
     fetchData();
   }, []);
 
-  const handleData = async (e) => {
-    // e.preventDefault();
-    setConfrim(true);
-
+  const handleBookTrip = async () => {
     try {
-      const response = await fetch('/api/customer', {
-        method: 'POST',  //Post mean you are using insret api from the customerr folder
+      const res = await fetch('/api/customer/bookTrip', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          user_id: 1, // Replace with actual userID
-          user_loc: location, //asssign the sate which you want you to insert in your database
-          user_dis: location1,
+          customer_id: 1,
+          driver_id: 2,
+          taxi_id: 3,
+          start_location: location,
+          end_location: location1,
+          start_time: new Date().toISOString(),
           status: ready,
         }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to insert trip data');
+      const newTrip = await res.json();
+      if (res.ok) {
+        console.log('Trip booked successfully:', newTrip);
+        setTripid(newTrip.trip.trip_id);
+        setConfrim(true);
+      } else {
+        console.error('Error booking trip:', newTrip.error);
       }
-
-      const data = await response.json();
-      console.log('Data inserted successfully:', data);
-      setTripid(data.data.tripid);
-      // Handle success state or feedback to the user
     } catch (error) {
-      console.error('Error inserting data:', error);
-      // Handle error state or feedback to the user
+      console.error('Error booking trip:', error);
     }
   };
 
+  const handleCancelTrip = async () => {
+    try {
+      const res = await fetch('/api/cancelTrip', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ trip_id: Tripid }),
+      });
 
-  
+      const updatedTrip = await res.json();
+      if (res.ok) {
+        console.log('Trip canceled successfully:', updatedTrip);
+      } else {
+        console.error('Error canceling trip:', updatedTrip.error);
+      }
+    } catch (error) {
+      console.error('Error canceling trip:', error);
+    }
+  };
 
   return (
     <div className="w-full">
@@ -134,7 +151,7 @@ const Cardata = ({ setConfrim }) => {
                     </div>
                   </div>
                   <div className='w-full flex'>
-                    <button onClick={handleData} className='bg-yellow-400 text-2xl text-white w-[90%] mx-auto py-3 text-center rounded-2xl'>Request</button>
+                    <button onClick={handleBookTrip} className='bg-yellow-400 text-2xl text-white w-[90%] mx-auto py-3 text-center rounded-2xl'>Request</button>
                   </div>
                 </div>
               </div>
