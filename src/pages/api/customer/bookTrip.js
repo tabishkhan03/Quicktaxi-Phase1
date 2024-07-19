@@ -12,6 +12,10 @@ export default async function handler(req, res) {
     taxi_id,
     start_location,
     end_location,
+    source_lat,
+    source_lng,
+    destination_lat,
+    destination_lng,
     start_time,
     status,
   } = req.body;
@@ -22,6 +26,10 @@ export default async function handler(req, res) {
     !taxi_id ||
     !start_location ||
     !end_location ||
+    !source_lat ||
+    !source_lng ||
+    !destination_lat ||
+    !destination_lng ||
     !start_time ||
     !status
   ) {
@@ -36,6 +44,10 @@ export default async function handler(req, res) {
         taxi_id,
         start_location,
         end_location,
+        source_lat,
+        source_lng,
+        destination_lat,
+        destination_lng,
         start_time: new Date(start_time),
         status,
       },
