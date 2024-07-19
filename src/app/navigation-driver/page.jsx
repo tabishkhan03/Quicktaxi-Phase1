@@ -15,6 +15,7 @@ const NavigationDriverPage = () => {
   const { state, dispatch } = useContext(AppContext);
   const [tripData, setTripData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isNavigate, setIsNavigate] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -77,8 +78,8 @@ const NavigationDriverPage = () => {
         dispatch({
           type: "SET_DESTINATION_LOCATION",
           payload: {
-            lat: parseFloat(tripData.destination_lat),
-            lng: parseFloat(tripData.destination_lng),
+            lat: parseFloat(tripData.source_lat),
+            lng: parseFloat(tripData.source_lng),
           },
         });
       }
@@ -90,7 +91,36 @@ const NavigationDriverPage = () => {
   const handleClick = () => {
     console.log("Start ride");
     // Add navigation logic here if needed
+    dispatch({
+      type: "SET_SOURCE_LOCATION",
+      payload: {
+        lat: parseFloat(tripData.source_lat),
+        lng: parseFloat(tripData.source_lng),
+      },
+    });
+
+    dispatch({
+      type: "SET_DESTINATION_LOCATION",
+      payload: {
+        lat: parseFloat(tripData.destination_lat),
+        lng: parseFloat(tripData.destination_lng),
+      },
+    });
+    setIsNavigate(false)
   };
+
+  const handleCollectCash = () => {
+    dispatch({
+      type: "SET_SOURCE_LOCATION",
+      payload: null
+    });
+
+    dispatch({
+      type: "SET_DESTINATION_LOCATION",
+      payload: null
+    });
+    setIsNavigate(false)
+  }
 
   console.log("state ", state);
 
@@ -109,7 +139,8 @@ const NavigationDriverPage = () => {
         <Address add={loading ? "Loading..." : tripData.start_location} />
       </div>
       <div className="absolute bottom-0 left-0 right-0">
-        <YellowButton text={"Navigate to customer's location"} onClick={handleClick} />
+        {isNavigate && <YellowButton text={"start trip"} onClick={handleClick} />}
+        {!isNavigate && <YellowButton text={"collect Cash"} onClick={handleCollectCash} />}
       </div>
     </div>
   );
