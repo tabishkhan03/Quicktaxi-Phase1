@@ -25,7 +25,6 @@ model Driver {
   phone             String?  @unique
   password          String
   license_number    String   @unique
-  typeOfVehicle     String   // New attribute
   registration_date DateTime @default(now())
   ratings           Rating[]
   taxis             Taxi[]
@@ -33,41 +32,41 @@ model Driver {
 }
 
 model Taxi {
-  taxi_id       Int     @id @default(autoincrement())
+  taxi_id       Int       @id @default(autoincrement())
   driver_id     Int
-  license_plate String  @unique
+  license_plate String    @unique
   model         String
   make          String
   year          Int
   color         String?
-  driver        Driver  @relation(fields: [driver_id], references: [driver_id])
-  trips         Trip[]
-  distance      String? 
-  number        String? 
-  charge        Float?  
+  charge        Float?
+  distance      String?
+  number        String?
   time          DateTime?
+  driver        Driver    @relation(fields: [driver_id], references: [driver_id])
+  trips         Trip[]
 }
 
 model Trip {
-  trip_id           Int       @id @default(autoincrement())
-  customer_id       Int
-  driver_id         Int
-  taxi_id           Int
-  start_location    String
-  end_location      String
-  start_time        DateTime
-  end_time          DateTime?
-  status            String
-  fare              Float?
-  payment           Payment?
-  rating            Rating?
-  source_lng        Float     // New attribute
-  source_lat        Float     // New attribute
-  destination_lng   Float     // New attribute
-  destination_lat   Float     // New attribute
-  customer          Customer  @relation(fields: [customer_id], references: [customer_id])
-  driver            Driver    @relation(fields: [driver_id], references: [driver_id])
-  taxi              Taxi      @relation(fields: [taxi_id], references: [taxi_id])
+  trip_id         Int       @id @default(autoincrement())
+  customer_id     Int
+  driver_id       Int
+  taxi_id         Int
+  start_location  String
+  end_location    String
+  start_time      DateTime
+  end_time        DateTime?
+  status          String
+  fare            Float?
+  destination_lat Float
+  destination_lng Float
+  source_lat      Float
+  source_lng      Float
+  payment         Payment?
+  rating          Rating?
+  customer        Customer  @relation(fields: [customer_id], references: [customer_id])
+  driver          Driver    @relation(fields: [driver_id], references: [driver_id])
+  taxi            Taxi      @relation(fields: [taxi_id], references: [taxi_id])
 }
 
 model Payment {
