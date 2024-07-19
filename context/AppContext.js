@@ -15,7 +15,7 @@ export const AppProvider = ({ children }) => {
       case "SET_USER_LOCATION":
         return { ...state, userLocation: action.payload };
       case "SET_SOURCE_LOCATION":
-        // return { ...state, sourceLocation: action.payload };
+        return { ...state, sourceLocation: action.payload };
       case "SET_DESTINATION_LOCATION":
         return { ...state, destinationLocation: action.payload };
       case "SET_DIRECTION":

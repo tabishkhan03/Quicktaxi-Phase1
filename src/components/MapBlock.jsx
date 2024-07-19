@@ -3,7 +3,7 @@
 import Map from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
-import { useEffect, useRef, useContext } from "react";
+import { useEffect, useRef, useContext, useState } from "react";
 import { AppContext } from "../../context/AppContext";
 import Markers from "./map/Markers";
 import Routes from "./map/Routes";
@@ -48,17 +48,39 @@ const Home = () => {
     }
   }, [destinationLocation, sourceLocation]);
 
+  // const getDirection = async () => {
+  //   const res = await fetch(
+  //     `https://api.mapbox.com/directions/v5/mapbox/driving/${sourceLocation.lng},${sourceLocation.lat};${destinationLocation.lng},${destinationLocation.lat}?alternatives=true&geometries=geojson&language=en&overview=full&steps=true&access_token=pk.eyJ1IjoibWFudml0aDUwNyIsImEiOiJjbHk4YTl1ejEwaDg2MnFxcGN6dnBpYmxjIn0.MYmf_2NaYmcEnQHhQWjhFA`,
+  //     {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     }
+  //   );
+  //   const result = await res.json();
+  //   dispatch({ type: "SET_DIRECTION", payload: result });
+  // };
+
   const getDirection = async () => {
     const res = await fetch(
-      `https://api.mapbox.com/directions/v5/mapbox/driving/${sourceLocation.lng},${sourceLocation.lat};${destinationLocation.lng},${destinationLocation.lat}?alternatives=true&geometries=geojson&language=en&overview=full&steps=true&access_token=pk.eyJ1IjoibWFudml0aDUwNyIsImEiOiJjbHk4YTl1ejEwaDg2MnFxcGN6dnBpYmxjIn0.MYmf_2NaYmcEnQHhQWjhFA`,
+      "https://api.mapbox.com/directions/v5/mapbox/driving/" +
+        sourceLocation.lng +
+        "," +
+        sourceLocation.lat +
+        ";" +
+        destinationLocation.lng +
+        "," +
+        destinationLocation.lat +
+        "?alternatives=true&geometries=geojson&language=en&overview=full&steps=true&access_token=pk.eyJ1IjoicGF3YW4tc2luZ2giLCJhIjoiY2x5OG04czlhMGs3MzJqczdqZTQxdzdkMCJ9.9hJYde5isDb9oy7qQbI62g",
       {
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json()",
         },
       }
     );
     const result = await res.json();
     dispatch({ type: "SET_DIRECTION", payload: result });
+    console.log(result);
   };
 
   return (

@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Taxi" ALTER COLUMN "distance" SET DATA TYPE TEXT;
