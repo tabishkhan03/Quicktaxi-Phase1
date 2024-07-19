@@ -8,7 +8,8 @@ export const AppProvider = ({ children }) => {
     sourceLocation: null,
     destinationLocation: null,
     direction: [],
-    tripid: null, // Add tripid to the initial state if it's part of your state
+    sourceName:null,
+    destinationName:null // Add tripid to the initial state if it's part of your state
   };
 
   function reducer(state, action) {
@@ -21,8 +22,10 @@ export const AppProvider = ({ children }) => {
         return { ...state, destinationLocation: action.payload };
       case "SET_DIRECTION":
         return { ...state, direction: action.payload };
-      case "SET_TRIPID":
-        return { ...state, tripid: action.payload }; // Add a case for setting tripid
+      case "SET_SOURCE_NAME":
+        return { ...state, sourceName: action.payload }; 
+      case "SET_DESTINATION_NAME":
+        return { ...state, destinationName: action.payload }; 
       default:
         return state;
     }

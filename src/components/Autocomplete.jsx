@@ -59,11 +59,17 @@ const Autocomplete = () => {
         lat: item.geometry.coordinates[1],
       },
     });
+
+    dispatch({
+      type: "SET_SOURCE_NAME",
+      payload:item.place_name,
+    })
   };
 
   const handleDestinationLocationSelect = (item) => {
     setDestinationQuery(item.place_name);
     setDestinationResults([]);
+
     dispatch({
       type: "SET_DESTINATION_LOCATION",
       payload: {
@@ -71,6 +77,11 @@ const Autocomplete = () => {
         lat: item.geometry.coordinates[1],
       },
     });
+    dispatch({
+      type: "SET_DESTINATION_NAME",
+      payload:item.place_name,
+    })
+
   };
 
   const clearLocations = () => {

@@ -5,11 +5,14 @@ import { AppContext } from "../../../context/AppContext"; // Correct import for 
 import { MdOutlinePayment } from "react-icons/md";
 import { IoTicketSharp } from "react-icons/io5";
 
-const Cardata = ({ setConfrim }) => {
+const Cardata = ({ setConfirm, setTripId, tripId }) => {
   const [menu, setMenu] = useState(true);
   const { state } = useContext(AppContext); // Destructuring state from AppContext
-  const { sourceLocation, destinationLocation, direction } = state; // Destructuring sourceLocation, destinationLocation, direction from state
+  const {sourceLocation, destinationLocation, direction, sourceName, destinationName } = state; // Destructuring sourceLocation, destinationLocation, direction from state
   const [driverData, setDriverData] = useState([]);
+
+  const [sourceLocationName, setSourceLocationName] = useState('');
+  const [sourceDestName, setSourceDestName] = useState('');
 
   const getCost = (charge) => {
     if (direction && direction.routes && direction.routes.length > 0) {
@@ -43,7 +46,7 @@ const Cardata = ({ setConfrim }) => {
 
   const handleData = async (e) => {
     // e.preventDefault();
-    setConfrim(true);
+    setConfirm(true);
 
     try {
       const response = await fetch("/api/customer", {
@@ -52,10 +55,10 @@ const Cardata = ({ setConfrim }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          user_id: 1, // Replace with actual userID
-          user_loc: location, //asssign the sate which you want you to insert in your database
-          user_dis: location1,
-          status: ready,
+          user_id: 1,
+          user_loc: sourceName, 
+          user_dis: destinationName,
+          status: "ready",
         }),
       });
 
@@ -66,7 +69,7 @@ const Cardata = ({ setConfrim }) => {
 
       const data = await response.json();
       console.log("Data inserted successfully:", data);
-      setTripid(data.data.tripid);
+      setTripId(data.data.tripid);
       // Handle success state or feedback to the user
     } catch (error) {
       console.error("Error inserting data:", error);

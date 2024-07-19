@@ -3,13 +3,12 @@ import { FaCircleDot } from "react-icons/fa6";
 import { GrLocation } from "react-icons/gr";
 import { AppContext } from "../../../context/AppContext";
 
-const UserCard = ({ setConfrim }) => {
+const UserCard = ({ setConfirm, setTripId, tripId }) => {
   const { state, dispatch } = useContext(AppContext);
-  const { sourceLocation, destinationLocation } = state;
-  const [canceltripid, setCanceltripid] = useState("cancel");
+  const { sourceName, destinationName } = state;
 
   const handlecancel = async () => {
-    setConfrim(false);
+    setConfirm(false);
 
     try {
       const response = await fetch("/api/customer", {
@@ -18,8 +17,8 @@ const UserCard = ({ setConfrim }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          tripid: state.tripid, // Assuming Tripid is part of the state
-          status: canceltripid,
+          tripid: tripId, // Assuming Tripid is part of the state
+          status: "cancelled",
         }),
       });
 
@@ -64,14 +63,14 @@ const UserCard = ({ setConfrim }) => {
           <div className="flex gap-4 p-1">
             <FaCircleDot size={25} className="text-yellow-400" />
             <div>
-              <h1 className="h-7 overflow-y-hidden">{sourceLocation}</h1>
+              <h1 className="h-7 overflow-y-hidden">{sourceName}</h1>
             </div>
           </div>
           <hr className="border-1.5 border-black" />
           <div className="flex gap-4 p-1">
             <GrLocation size={28} className="text-green-500" />
             <div>
-              <h1 className="h-7 overflow-y-hidden">{destinationLocation}</h1>
+              <h1 className="h-7 overflow-y-hidden">{destinationName}</h1>
             </div>
           </div>
         </div>
