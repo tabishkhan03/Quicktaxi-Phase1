@@ -4,7 +4,7 @@ import Map from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl from "mapbox-gl";
 import { useEffect, useRef, useContext, useState } from "react";
-import { AppContext } from "../../context/AppContext";
+import { AppContext } from "../context/AppContext";
 import Markers from "./map/Markers";
 import Routes from "./map/Routes";
 

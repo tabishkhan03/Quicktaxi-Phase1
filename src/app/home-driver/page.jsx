@@ -1,7 +1,12 @@
 "use client";
 import { useEffect, useContext, useState } from "react";
-import { AppContext, AppProvider } from "../../../context/AppContext";
-import { FaArrowLeft, FaUser, FaCalendarAlt, FaRupeeSign } from "react-icons/fa";
+import { AppContext, AppProvider } from "../../context/AppContext";
+import {
+  FaArrowLeft,
+  FaUser,
+  FaCalendarAlt,
+  FaRupeeSign,
+} from "react-icons/fa";
 import Link from "next/link";
 import MapBlock from "../../components/MapBlock";
 import YellowButton from "../../components/YellowButton";
@@ -54,8 +59,6 @@ const HomeDriverPage = () => {
       setRideRequests([]);
     }
   };
-
-
 
   return (
     <div className="min-h-screen flex flex-col">

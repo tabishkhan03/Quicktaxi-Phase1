@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AppContext, AppProvider } from "../../../context/AppContext";
+import { AppContext, AppProvider } from "../../context/AppContext";
 import MapBlock from "@/components/MapBlock";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
@@ -24,7 +24,11 @@ const NavigationDriverPage = () => {
         const driver_id = searchParams.get("driver_id");
 
         if (trip_id && driver_id) {
-          console.log("Fetching data with trip_id and driver_id:", trip_id, driver_id);
+          console.log(
+            "Fetching data with trip_id and driver_id:",
+            trip_id,
+            driver_id
+          );
 
           const response = await axios.post(
             "http://localhost:3000/api/trips/confirmed-trip",
@@ -47,7 +51,10 @@ const NavigationDriverPage = () => {
             console.log("data before setting trip data ", trip);
             setTripData(trip);
           } else {
-            console.error("Trip data is missing required location properties:", trip);
+            console.error(
+              "Trip data is missing required location properties:",
+              trip
+            );
           }
         }
       } catch (error) {
@@ -106,21 +113,21 @@ const NavigationDriverPage = () => {
         lng: parseFloat(tripData.destination_lng),
       },
     });
-    setIsNavigate(false)
+    setIsNavigate(false);
   };
 
   const handleCollectCash = () => {
     dispatch({
       type: "SET_SOURCE_LOCATION",
-      payload: null
+      payload: null,
     });
 
     dispatch({
       type: "SET_DESTINATION_LOCATION",
-      payload: null
+      payload: null,
     });
-    setIsNavigate(false)
-  }
+    setIsNavigate(false);
+  };
 
   console.log("state ", state);
 
@@ -129,7 +136,10 @@ const NavigationDriverPage = () => {
       <div className="flex-1 relative">
         <MapBlock />
       </div>
-      <Link href="/home-driver" className="w-full p-4 absolute top-0 left-0 flex flex-row gap-x-2">
+      <Link
+        href="/home-driver"
+        className="w-full p-4 absolute top-0 left-0 flex flex-row gap-x-2"
+      >
         <FaArrowLeft className="text-black sm:text-3xl text-4xl" />
       </Link>
       <div className="w-full text-center absolute top-16 left-0 right-0 mx-auto">
@@ -139,8 +149,12 @@ const NavigationDriverPage = () => {
         <Address add={loading ? "Loading..." : tripData.start_location} />
       </div>
       <div className="absolute bottom-0 left-0 right-0">
-        {isNavigate && <YellowButton text={"start trip"} onClick={handleClick} />}
-        {!isNavigate && <YellowButton text={"collect Cash"} onClick={handleCollectCash} />}
+        {isNavigate && (
+          <YellowButton text={"start trip"} onClick={handleClick} />
+        )}
+        {!isNavigate && (
+          <YellowButton text={"collect Cash"} onClick={handleCollectCash} />
+        )}
       </div>
     </div>
   );

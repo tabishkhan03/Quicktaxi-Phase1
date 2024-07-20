@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { FaCircleDot } from "react-icons/fa6";
 import { GrLocation } from "react-icons/gr";
-import { AppContext } from "../../../context/AppContext";
+import { AppContext } from "../../context/AppContext";
 
 const UserCard = ({ setConfirm, setTripId, tripId }) => {
   const { state, dispatch } = useContext(AppContext);
@@ -11,7 +11,7 @@ const UserCard = ({ setConfirm, setTripId, tripId }) => {
     setConfirm(false);
 
     try {
-      const response = await fetch("/api/customer", {
+      const response = await fetch("/api/customers/cancelride", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

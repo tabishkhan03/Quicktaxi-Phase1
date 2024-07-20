@@ -1,18 +1,24 @@
 import React, { useState, useContext, useEffect } from "react";
 // import Data from '../../app/data.js';
 import { SlArrowUp, SlArrowDown } from "react-icons/sl";
-import { AppContext } from "../../../context/AppContext"; // Correct import for AppContext
+import { AppContext } from "../../context/AppContext"; // Correct import for AppContext
 import { MdOutlinePayment } from "react-icons/md";
 import { IoTicketSharp } from "react-icons/io5";
 
 const Cardata = ({ setConfirm, setTripId, tripId }) => {
   const [menu, setMenu] = useState(true);
   const { state } = useContext(AppContext); // Destructuring state from AppContext
-  const {sourceLocation, destinationLocation, direction, sourceName, destinationName } = state; // Destructuring sourceLocation, destinationLocation, direction from state
+  const {
+    sourceLocation,
+    destinationLocation,
+    direction,
+    sourceName,
+    destinationName,
+  } = state; // Destructuring sourceLocation, destinationLocation, direction from state
   const [driverData, setDriverData] = useState([]);
 
-  const [sourceLocationName, setSourceLocationName] = useState('');
-  const [sourceDestName, setSourceDestName] = useState('');
+  const [sourceLocationName, setSourceLocationName] = useState("");
+  const [sourceDestName, setSourceDestName] = useState("");
 
   const getCost = (charge) => {
     if (direction && direction.routes && direction.routes.length > 0) {
@@ -49,15 +55,15 @@ const Cardata = ({ setConfirm, setTripId, tripId }) => {
     setConfirm(true);
 
     try {
-      const response = await fetch("/api/customer", {
+      const response = await fetch("/api/customers/bookride", {
         method: "POST", //Post mean you are using insret api from the customerr folder
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          user_id: 1,
-          user_loc: sourceName, 
-          user_dis: destinationName,
+          customer_id: 1,
+          start_location: sourceName,
+          end_location: destinationName,
           status: "ready",
         }),
       });

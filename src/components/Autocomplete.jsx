@@ -3,8 +3,7 @@ import { FaCircleDot } from "react-icons/fa6";
 import { FaRegClock } from "react-icons/fa";
 import { GrLocation } from "react-icons/gr";
 import { RxCross1 } from "react-icons/rx";
-import { AppContext } from "../../context/AppContext";
-
+import { AppContext } from "../context/AppContext";
 
 const Autocomplete = () => {
   const [sourceQuery, setSourceQuery] = useState("");
@@ -62,8 +61,8 @@ const Autocomplete = () => {
 
     dispatch({
       type: "SET_SOURCE_NAME",
-      payload:item.place_name,
-    })
+      payload: item.place_name,
+    });
   };
 
   const handleDestinationLocationSelect = (item) => {
@@ -79,9 +78,8 @@ const Autocomplete = () => {
     });
     dispatch({
       type: "SET_DESTINATION_NAME",
-      payload:item.place_name,
-    })
-
+      payload: item.place_name,
+    });
   };
 
   const clearLocations = () => {
@@ -123,7 +121,10 @@ const Autocomplete = () => {
           )}
         </div>
         <div>
-          <FaRegClock size={35} className="bg-yellow-400 p-1 text-white rounded-lg" />
+          <FaRegClock
+            size={35}
+            className="bg-yellow-400 p-1 text-white rounded-lg"
+          />
         </div>
       </div>
       <hr className="mt-1 mb-1" />
@@ -167,4 +168,3 @@ const Autocomplete = () => {
 };
 
 export default Autocomplete;
-

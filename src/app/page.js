@@ -3,14 +3,14 @@
 import { useContext, useEffect, useState } from "react";
 import Autocomplete from "@/components/Autocomplete";
 import MapBlock from "@/components/MapBlock";
-import { AppContext } from "../../context/AppContext";
+import { AppContext } from "../context/AppContext";
 import Cardata from "@/components/carcard/Cardata";
 import { IoIosHome } from "react-icons/io";
 import { GiNotebook } from "react-icons/gi";
 import { FaWallet } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import UserCard from "@/components/carcard/UserCard";
-import { AppProvider } from "../../context/AppContext";
+import { AppProvider } from "../context/AppContext";
 
 function App() {
   const { state, dispatch } = useContext(AppContext);
@@ -48,9 +48,19 @@ function App() {
       {/* Booking Car */}
       <div>
         {confirm ? (
-          <UserCard setConfirm={setConfirm} location={state.userLocation} setTripId={setTripId} tripId={tripId}/>
+          <UserCard
+            setConfirm={setConfirm}
+            location={state.userLocation}
+            setTripId={setTripId}
+            tripId={tripId}
+          />
         ) : (
-          <Cardata setConfirm={setConfirm} location={state.userLocation} setTripId={setTripId} tripId={tripId}/>
+          <Cardata
+            setConfirm={setConfirm}
+            location={state.userLocation}
+            setTripId={setTripId}
+            tripId={tripId}
+          />
         )}
       </div>
       {/* Footer */}
