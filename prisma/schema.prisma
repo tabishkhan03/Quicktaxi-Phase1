@@ -50,11 +50,11 @@ model Taxi {
 model Trip {
   trip_id         Int       @id @default(autoincrement())
   customer_id     Int
-  driver_id       Int
-  taxi_id         Int
+  driver_id       Int?
+  taxi_id         Int?
   start_location  String
   end_location    String
-  start_time      DateTime
+  start_time      DateTime?   @default(now())
   end_time        DateTime?
   status          String
   fare            Float?
@@ -65,8 +65,8 @@ model Trip {
   payment         Payment?
   rating          Rating?
   customer        Customer  @relation(fields: [customer_id], references: [customer_id])
-  driver          Driver    @relation(fields: [driver_id], references: [driver_id])
-  taxi            Taxi      @relation(fields: [taxi_id], references: [taxi_id])
+  driver          Driver?    @relation(fields: [driver_id], references: [driver_id])
+  taxi            Taxi?      @relation(fields: [taxi_id], references: [taxi_id])
 }
 
 model Payment {
