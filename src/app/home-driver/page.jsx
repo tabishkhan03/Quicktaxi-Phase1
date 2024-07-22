@@ -44,7 +44,7 @@ const HomeDriverPage = () => {
     try {
       const response = await fetch("/api/trips/ready-trips");
       const data = await response.json();
-      console.log("data")
+      console.log("data ",data)
       if (Array.isArray(data)) {
         setRideRequests(data);
       } else {
