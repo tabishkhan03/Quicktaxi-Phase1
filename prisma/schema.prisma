@@ -64,7 +64,7 @@ model Trip {
   source_lng      Float
   payment         Payment?
   rating          Rating?
-  customer        Customer  @relation(fields: [customer_id], references: [customer_id])
+  customer        Customer?  @relation(fields: [customer_id], references: [customer_id])
   driver          Driver?    @relation(fields: [driver_id], references: [driver_id])
   taxi            Taxi?      @relation(fields: [taxi_id], references: [taxi_id])
 }

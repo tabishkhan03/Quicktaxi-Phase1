@@ -58,7 +58,6 @@
 //     await prisma.$disconnect();
 //   }
 // }
-
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -74,6 +73,7 @@ export async function POST(request) {
       destination_lat,
       destination_lng,
       status,
+      start_time,
     } = await request.json();
 
     console.log("Request body received for booking ride:", {
@@ -85,6 +85,7 @@ export async function POST(request) {
       destination_lat,
       destination_lng,
       status,
+      start_time,
     });
 
     if (
@@ -95,7 +96,8 @@ export async function POST(request) {
       !source_lng ||
       !destination_lat ||
       !destination_lng ||
-      !status
+      !status ||
+      !start_time
     ) {
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
@@ -113,6 +115,7 @@ export async function POST(request) {
         destination_lat,
         destination_lng,
         status,
+        start_time: new Date(start_time),
       },
     });
 
@@ -128,5 +131,7 @@ export async function POST(request) {
       JSON.stringify({ error: "Error booking trip", details: error.message }),
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

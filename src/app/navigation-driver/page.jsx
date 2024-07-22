@@ -3,11 +3,11 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AppContext, AppProvider } from "../../context/AppContext";
-import MapBlock from "@/components/MapBlock";
+import MapBlock from "@/app/components/MapBlock";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
-import Address from "../../components/Address";
-import YellowButton from "@/components/YellowButton";
+import Address from "../components/Address";
+import YellowButton from "@/app/components/YellowButton";
 
 const NavigationDriverPage = () => {
   const router = useRouter();
@@ -30,13 +30,10 @@ const NavigationDriverPage = () => {
             driver_id
           );
 
-          const response = await axios.post(
-            "http://localhost:3000/api/trips/confirmed-trip",
-            {
-              trip_id,
-              driver_id,
-            }
-          );
+          const response = await axios.post("/api/trips/confirmed-trip", {
+            trip_id,
+            driver_id,
+          });
 
           const trip = response.data[0]; // Access the first item in the array
           console.log("trip ", trip);

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { Marker } from "react-map-gl";
-import { AppContext } from "../../context/AppContext";
+import { AppContext } from "../../../context/AppContext";
 import { FaMapMarkerAlt } from "react-icons/fa";
 
 const Markers = () => {

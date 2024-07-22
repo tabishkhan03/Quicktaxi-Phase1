@@ -8,10 +8,10 @@ import {
   FaRupeeSign,
 } from "react-icons/fa";
 import Link from "next/link";
-import MapBlock from "../../components/MapBlock";
-import YellowButton from "../../components/YellowButton";
-import LoadingOverlay from "../../components/LoadingOverlay";
-import RideRequest from "../../components/RideRequest";
+import MapBlock from "../components/MapBlock";
+import YellowButton from "../components/YellowButton";
+import LoadingOverlay from "../components/LoadingOverlay";
+import RideRequest from "../components/RideRequest";
 
 const HomeDriverPage = () => {
   const { state, dispatch } = useContext(AppContext);
@@ -42,9 +42,7 @@ const HomeDriverPage = () => {
   const handleFindRide = async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        "http://localhost:3000/api/trips/ready-trips"
-      );
+      const response = await fetch("/api/trips/ready-trips");
       const data = await response.json();
       if (Array.isArray(data)) {
         setRideRequests(data);

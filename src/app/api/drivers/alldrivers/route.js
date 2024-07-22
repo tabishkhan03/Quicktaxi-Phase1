@@ -85,6 +85,7 @@ export async function GET(request) {
         taxis: true,
       },
     });
+    console.log(alldrivers);
     return new Response(JSON.stringify(alldrivers), { status: 200 });
   } catch (error) {
     console.log(error);

@@ -1,14 +1,20 @@
 import React, { useState, useContext, useEffect } from "react";
 import { SlArrowUp, SlArrowDown } from "react-icons/sl";
-import { AppContext } from "../../context/AppContext";
+import { AppContext } from "../../../context/AppContext";
 import { MdOutlinePayment } from "react-icons/md";
 import { IoTicketSharp } from "react-icons/io5";
 import axios from "axios";
 
-const Cardata = ({ setConfirm, setTripId, tripId }) => {
+const Cardata = ({ setConfirm, setTripId }) => {
   const [menu, setMenu] = useState(true);
   const { state } = useContext(AppContext);
-  const { sourceLocation, destinationLocation, direction, sourceName, destinationName } = state;
+  const {
+    sourceLocation,
+    destinationLocation,
+    direction,
+    sourceName,
+    destinationName,
+  } = state;
   const [driverData, setDriverData] = useState([]);
   const [selectedDriver, setSelectedDriver] = useState(null);
 
@@ -22,18 +28,16 @@ const Cardata = ({ setConfirm, setTripId, tripId }) => {
   };
 
   const fetchData = async () => {
-    const res = await fetch("http://localhost:3000/api/drivers/alldrivers");
+    const res = await fetch("/api/drivers/alldrivers");
     const data = await res.json();
-    const finalData = data.map((driver) => {
-      return {
-        driver: driver.name,
-        taxi_id: driver.taxis[0]?.taxi_id,
-        name: driver.taxis[0]?.model,
-        number: driver.taxis[0]?.number,
-        charge: driver.taxis[0]?.charge,
-        distance: driver.taxis[0]?.distance,
-      };
-    });
+    const finalData = data.map((driver) => ({
+      driver: driver.name,
+      taxi_id: driver.taxis[0]?.taxi_id,
+      name: driver.taxis[0]?.model,
+      number: driver.taxis[0]?.number,
+      charge: driver.taxis[0]?.charge,
+      distance: driver.taxis[0]?.distance,
+    }));
     setDriverData(finalData);
   };
 
@@ -51,26 +55,24 @@ const Cardata = ({ setConfirm, setTripId, tripId }) => {
 
     try {
       const response = await axios.post("/api/customers/bookride", {
-          customer_id: 1,
-          start_location: sourceName,
-          end_location: destinationName,
-          source_lat: sourceLocation.lat,
-          source_lng: sourceLocation.lng,
-          destination_lat: destinationLocation.lat,
-          destination_lng: destinationLocation.lng,
-          status: "ready",
+        customer_id: 1,
+        start_location: sourceName,
+        end_location: destinationName,
+        source_lat: sourceLocation.lat,
+        source_lng: sourceLocation.lng,
+        destination_lat: destinationLocation.lat,
+        destination_lng: destinationLocation.lng,
+        status: "ready",
+        start_time: new Date().toISOString(),
       });
 
-      if (!response.data == 200) {
-        const errorData = await response.data;
-        throw new Error(errorData.error || "Failed to insert trip data");
+      if (response.status !== 200) {
+        throw new Error(response.data.error || "Failed to insert trip data");
       }
 
-      const data = await response.data;
+      const data = response.data;
       console.log("Data inserted successfully:", data);
       setTripId(data.trip.trip_id);
-
-      console.log(data.trip.trip_id);
     } catch (error) {
       console.error("Error inserting data:", error);
     }
@@ -96,7 +98,9 @@ const Cardata = ({ setConfirm, setTripId, tripId }) => {
               <div className="max-h-64 overflow-y-scroll">
                 {driverData.map((cars, id) => (
                   <div
-                    className={`flex justify-between px-2 border-1.5px border-gray-200 py-2 hover:bg-yellow-300 ${selectedDriver === cars ? 'bg-yellow-200' : ''}`}
+                    className={`flex justify-between px-2 border-1.5px border-gray-200 py-2 hover:bg-yellow-300 ${
+                      selectedDriver === cars ? "bg-yellow-200" : ""
+                    }`}
                     key={id}
                     onClick={() => setSelectedDriver(cars)}
                   >
@@ -109,7 +113,9 @@ const Cardata = ({ setConfirm, setTripId, tripId }) => {
                     </div>
                     <div className="flex flex-col items-center mx-2">
                       <p className="text-xl font-medium">{cars.number}</p>
-                      <p className="text-green-400">rs.{getCost(cars.charge)}</p>
+                      <p className="text-green-400">
+                        rs.{getCost(cars.charge)}
+                      </p>
                     </div>
                   </div>
                 ))}

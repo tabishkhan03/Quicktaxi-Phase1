@@ -3,7 +3,7 @@ import { FaCircleDot } from "react-icons/fa6";
 import { FaRegClock } from "react-icons/fa";
 import { GrLocation } from "react-icons/gr";
 import { RxCross1 } from "react-icons/rx";
-import { AppContext } from "../context/AppContext";
+import { AppContext } from "../../context/AppContext";
 
 const Autocomplete = () => {
   const [sourceQuery, setSourceQuery] = useState("");
