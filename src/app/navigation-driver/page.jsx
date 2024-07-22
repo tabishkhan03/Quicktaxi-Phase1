@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext, useEffect, useState, Suspense  } from "react";
+import React, { useContext, useEffect, useState, Suspense } from "react";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AppContext, AppProvider } from "../../context/AppContext";
@@ -10,7 +10,7 @@ import Address from "../components/Address";
 import YellowButton from "@/app/components/YellowButton";
 import LoadingOverlay from "../components/LoadingOverlay";
 
-const NavigationDriverPage = () => {
+const NavigationDriverContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { state, dispatch } = useContext(AppContext);
@@ -130,8 +130,6 @@ const NavigationDriverPage = () => {
   console.log("state ", state);
 
   return (
-    
-    <Suspense fallback={<LoadingOverlay />}>
     <div className="min-h-screen flex flex-col relative">
       <div className="flex-1 relative">
         <MapBlock />
@@ -157,9 +155,14 @@ const NavigationDriverPage = () => {
         )}
       </div>
     </div>
-    </Suspense>
   );
 };
+
+const NavigationDriverPage = () => (
+  <Suspense fallback={<LoadingOverlay />}>
+    <NavigationDriverContent />
+  </Suspense>
+);
 
 const NavigationDriverWrapper = () => (
   <AppProvider>
