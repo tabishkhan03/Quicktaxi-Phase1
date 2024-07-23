@@ -4,34 +4,32 @@ import { GrLocation } from "react-icons/gr";
 import { AppContext } from "../../../context/AppContext";
 import RideConfirmed from "./RideConfirmed";
 import { supabase } from "@/utils/supabase";
+import axios from "axios";
 
 const UserCard = ({ setConfirm, setTripId, tripId }) => {
   const { state, dispatch } = useContext(AppContext);
   const { sourceName, destinationName } = state;
+  const [cancel, setCancel] = useState("cancelled");
+  
   const [tripStatus, setTripStatus] = useState(null);
 
   const handlecancel = async () => {
     setConfirm(false);
 
     try {
-      const response = await fetch("/api/customers/cancelride", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          trip_id: tripId, // Assuming Tripid is part of the state
-          status: "cancelled",
-        }),
+      const response = await axios.put('/api/customers/cancelride', {
+        trip_id: tripId, // Assuming Tripid is part of the state
+        status:cancel,
+       
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      if (!response.status == 200) {
+        const errorData = await response.data;
         throw new Error(errorData.error || "Failed to insert trip data");
       }
 
-      const data = await response.json();
-      console.log("Data inserted successfully:", data);
+      const data = await response.data;
+      console.log("Ride Cancel successfully:", data);
       // Handle success state or feedback to the user
     } catch (error) {
       console.error("Error inserting data:", error);
