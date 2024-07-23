@@ -19,10 +19,10 @@ const page = () => {
             className="sm:w-full sm:h-44 w-fit bg-transparent bg-none"
           />
           <div className="flex flex-col gap-0">
-            <span className="sm:text-xs text-center font-bold">
+            <span className="sm:text-md text-lg text-center font-bold">
               We're thrilled to have you join our team.
             </span>
-            <p className="sm:text-xs text-center font-bold">
+            <p className="sm:text-md text-lg text-center font-bold">
               Get ready to drive, earn, and make every ride a fantastic
               experience for our passengers. Let's hit the road together!
             </p>
