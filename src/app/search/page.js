@@ -1,6 +1,6 @@
-import Navbar from "@/app/components/nav-bar";
+import Navbar from "../components/nav-bar/index";
 
-import { vehicles } from "@/db/db";
+import { vehicles } from "../../db/db";
 function SearchPage() {
   return (
     <div className="min-h-screen ">
