@@ -1,16 +1,15 @@
 "use client";
 
 import { useContext, useEffect, useState } from "react";
-import Autocomplete from "@/app/components/Autocomplete";
-import MapBlock from "@/app/components/MapBlock";
-import { AppContext } from "../context/AppContext";
-import Cardata from "@/app/components/carcard/Cardata";
+import Autocomplete from "./components/Autocomplete";
+import MapBlock from "./components/MapBlock";
+import { AppContext, AppProvider } from "../context/AppContext";
+import Cardata from "./components/carcard/Cardata";
 import { IoIosHome } from "react-icons/io";
 import { GiNotebook } from "react-icons/gi";
 import { FaWallet } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
-import UserCard from "@/app/components/carcard/UserCard";
-import { AppProvider } from "../context/AppContext";
+import UserCard from "./components/carcard/UserCard";
 
 function App() {
   const { state, dispatch } = useContext(AppContext);

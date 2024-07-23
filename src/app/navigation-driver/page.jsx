@@ -3,11 +3,11 @@ import React, { useContext, useEffect, useState, Suspense } from "react";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AppContext, AppProvider } from "../../context/AppContext";
-import MapBlock from "@/app/components/MapBlock";
+import MapBlock from "../components/MapBlock";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
 import Address from "../components/Address";
-import YellowButton from "@/app/components/YellowButton";
+import YellowButton from "../components/YellowButton";
 import LoadingOverlay from "../components/LoadingOverlay";
 
 const NavigationDriverContent = () => {
