@@ -1,8 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
@@ -14,6 +16,11 @@
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
+} */
+
+* {
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
 }
 
 body {
@@ -30,4 +37,73 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+/* styles.css */
+.input-placeholder-black-bold::placeholder {
+  @apply text-black font-semibold;
+}
+
+.checkbox-wrapper {
+  cursor: pointer;
+}
+
+.checkbox-wrapper:hover svg .background {
+  fill: #5ee71e;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked + svg .stroke {
+  stroke-dashoffset: 0;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked + svg .check {
+  stroke-dashoffset: 0;
+}
+
+.stroke,
+.check {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+/* This part is of drivers searching a ride animation can be used for customers side as well */
+
+@keyframes dots {
+  0%,
+  20% {
+    content: "";
+  }
+  40% {
+    content: ".";
+  }
+  60% {
+    content: "..";
+  }
+  80%,
+  100% {
+    content: "...";
+  }
+}
+
+.animate-dots::after {
+  content: "";
+  animation: dots 1s steps(1, end) infinite;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #fcd34d; 
+  border-radius: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.custom-scrollbar {
+  scrollbar-color: #fcd34d #f1f1f1;
+  scrollbar-width: thin;
 }
