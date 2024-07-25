@@ -19,32 +19,40 @@ model Customer {
 }
 
 model Driver {
-  driver_id         Int      @id @default(autoincrement())
-  name              String
-  email             String?  @unique
-  phone             String?  @unique
-  password          String
-  license_number    String   @unique
-  registration_date DateTime @default(now())
-  ratings           Rating[]
-  taxis             Taxi[]
-  trips             Trip[]
+  driver_id                Int      @id @default(autoincrement())
+  name                     String
+  email                    String?  @unique
+  phone                    String?  @unique
+  password                 String
+  license_number           String   @unique
+  registration_date        DateTime @default(now())
+  profile_pic_url          String?  // URL for the driver's profile picture
+  bank_document_type       String?  // Type of bank document provided (e.g., Passbook, Cancelled Cheque, etc.)
+  bank_document_url        String?  // URL for the bank document
+  driving_license_front_url String? // URL for the front photo of the driving license
+  driving_license_back_url  String? // URL for the back photo of the driving license
+  ratings                  Rating[]
+  taxis                    Taxi[]
+  trips                    Trip[]
 }
 
 model Taxi {
-  taxi_id       Int       @id @default(autoincrement())
-  driver_id     Int
-  license_plate String    @unique
-  model         String
-  make          String
-  year          Int
-  color         String?
-  charge        Float?
-  distance      String?
-  number        String?
-  time          DateTime?
-  driver        Driver    @relation(fields: [driver_id], references: [driver_id])
-  trips         Trip[]
+  taxi_id             Int       @id @default(autoincrement())
+  driver_id           Int
+  license_plate       String    @unique
+  model               String
+  make                String
+  year                Int
+  color               String?
+  charge              Float?
+  distance            String?
+  number              String?
+  time                DateTime?
+  photo_front_url     String?   // URL for the front photo of the taxi
+  photo_back_url      String?   // URL for the back photo of the taxi
+  photo_inside_url    String?   // URL for the inside photo of the taxi
+  driver              Driver    @relation(fields: [driver_id], references: [driver_id])
+  trips               Trip[]
 }
 
 model Trip {
