@@ -5,6 +5,7 @@ import ChangeProfile from "./ChangeProfile";
 import Sign from "./Sign";
 import ButtonWithArrow from "./ButtonWithArrow";
 import Popup from "./Popup";
+import OtpVerify from "./OtpVerify";
 
 export {
   ProfilePic,
@@ -14,4 +15,5 @@ export {
   Sign,
   ButtonWithArrow,
   Popup,
+  OtpVerify,
 };

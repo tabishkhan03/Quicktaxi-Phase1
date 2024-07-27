@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { PrevPage, Sign, Popup } from "../../components";
 const page = () => {
+  //
   const [signUpPage, setSignUpPage] = useState(true);
   return (
     <>
