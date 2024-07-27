@@ -42,7 +42,7 @@ function Sign() {
 
   // Redirect if user is authenticated
   if (user) {
-    window.location.href = "/home-new";
+    window.location.href = "/home-driver";
     return null;
   }
 
