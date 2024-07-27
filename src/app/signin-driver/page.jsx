@@ -56,9 +56,9 @@ function Sign() {
               Getting Started!
             </p>
             <p className="w-full sm:text-md text-sm text-left text-black font-semibold mt-2">
-              Are you a Driver?{" "}
+              Are you a Customer?{" "}
               <Link
-                href={"/signin-driver"}
+                href={"/sign-in-new"}
                 className="cursor-pointer text-blue-800 font-bold"
               >
                 Yes!
