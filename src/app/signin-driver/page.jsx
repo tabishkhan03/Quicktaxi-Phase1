@@ -30,14 +30,14 @@ function Sign() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSignUp) {
-      await signUp(email, password);
+      await signUp(email, password, "driver");
     } else {
-      await logIn(email, password);
+      await logIn(email, password, "driver");
     }
   };
 
   const handleOAuth = async (provider) => {
-    await signInWithOAuth(provider);
+    await signInWithOAuth(provider, "driver");
   };
 
   // Redirect if user is authenticated

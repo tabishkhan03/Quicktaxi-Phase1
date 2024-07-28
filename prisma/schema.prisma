@@ -4,11 +4,11 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DIRECT_URL")
 }
 
 model Customer {
-  customer_id       Int      @id @default(autoincrement())
+  customer_id       String   @id @default(uuid())
   name              String
   email             String?  @unique
   phone             String?  @unique
@@ -19,42 +19,50 @@ model Customer {
 }
 
 model Driver {
-  driver_id         Int      @id @default(autoincrement())
-  name              String
-  email             String?  @unique
-  phone             String?  @unique
-  password          String
-  license_number    String   @unique
-  registration_date DateTime @default(now())
-  ratings           Rating[]
-  taxis             Taxi[]
-  trips             Trip[]
+  driver_id                 String   @id @default(uuid())
+  name                      String
+  email                     String?  @unique
+  phone                     String?  @unique
+  password                  String
+  license_number            String   @unique
+  registration_date         DateTime @default(now())
+  bank_document_type        String?
+  bank_document_url         String?
+  driving_license_back_url  String?
+  driving_license_front_url String?
+  profile_pic_url           String?
+  ratings                   Rating[]
+  taxis                     Taxi[]
+  trips                     Trip[]
 }
 
 model Taxi {
-  taxi_id       Int       @id @default(autoincrement())
-  driver_id     Int
-  license_plate String    @unique
-  model         String
-  make          String
-  year          Int
-  color         String?
-  charge        Float?
-  distance      String?
-  number        String?
-  time          DateTime?
-  driver        Driver    @relation(fields: [driver_id], references: [driver_id])
-  trips         Trip[]
+  taxi_id          String    @id @default(uuid())
+  driver_id        String
+  license_plate    String    @unique
+  model            String
+  make             String
+  year             Int
+  color            String?
+  charge           Float?
+  distance         String?
+  number           String?
+  time             DateTime?
+  photo_back_url   String?
+  photo_front_url  String?
+  photo_inside_url String?
+  driver           Driver    @relation(fields: [driver_id], references: [driver_id])
+  trips            Trip[]
 }
 
 model Trip {
-  trip_id         Int       @id @default(autoincrement())
-  customer_id     Int
-  driver_id       Int?
-  taxi_id         Int?
+  trip_id         String    @id @default(uuid())
+  customer_id     String
+  driver_id       String?
+  taxi_id         String?
   start_location  String
   end_location    String
-  start_time      DateTime?   @default(now())
+  start_time      DateTime? @default(now())
   end_time        DateTime?
   status          String
   fare            Float?
@@ -64,14 +72,14 @@ model Trip {
   source_lng      Float
   payment         Payment?
   rating          Rating?
-  customer        Customer?  @relation(fields: [customer_id], references: [customer_id])
-  driver          Driver?    @relation(fields: [driver_id], references: [driver_id])
-  taxi            Taxi?      @relation(fields: [taxi_id], references: [taxi_id])
+  customer        Customer  @relation(fields: [customer_id], references: [customer_id])
+  driver          Driver?   @relation(fields: [driver_id], references: [driver_id])
+  taxi            Taxi?     @relation(fields: [taxi_id], references: [taxi_id])
 }
 
 model Payment {
-  payment_id     Int      @id @default(autoincrement())
-  trip_id        Int      @unique
+  payment_id     String   @id @default(uuid())
+  trip_id        String   @unique
   amount         Float
   payment_method String
   payment_status String
@@ -80,10 +88,10 @@ model Payment {
 }
 
 model Rating {
-  rating_id   Int      @id @default(autoincrement())
-  trip_id     Int      @unique
-  customer_id Int
-  driver_id   Int
+  rating_id   String   @id @default(uuid())
+  trip_id     String   @unique
+  customer_id String
+  driver_id   String
   rating      Int
   comments    String?
   rating_date DateTime @default(now())

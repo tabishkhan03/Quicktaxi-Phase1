@@ -30,21 +30,21 @@ function Sign() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSignUp) {
-      await signUp(email, password);
+      await signUp(email, password, "customer");
     } else {
-      await logIn(email, password);
+      await logIn(email, password, "customer");
     }
   };
 
   const handleOAuth = async (provider) => {
-    await signInWithOAuth(provider);
+    await signInWithOAuth(provider, "customer");
   };
 
   // Redirect if user is authenticated
-  if (user) {
-    window.location.href = "/home-new";
-    return null;
-  }
+  // if (user) {
+  //   window.location.href = "/home-new";
+  //   return null;
+  // }
 
   return (
     <form onSubmit={handleSubmit}>
