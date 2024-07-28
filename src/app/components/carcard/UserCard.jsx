@@ -3,24 +3,23 @@ import { FaCircleDot } from "react-icons/fa6";
 import { GrLocation } from "react-icons/gr";
 import { AppContext } from "../../../context/AppContext";
 import RideConfirmed from "./RideConfirmed";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "../../../utils/supabase";
 import axios from "axios";
 
 const UserCard = ({ setConfirm, setTripId, tripId }) => {
   const { state, dispatch } = useContext(AppContext);
   const { sourceName, destinationName } = state;
   const [cancel, setCancel] = useState("cancelled");
-  
+
   const [tripStatus, setTripStatus] = useState(null);
 
   const handlecancel = async () => {
     setConfirm(false);
 
     try {
-      const response = await axios.put('/api/customers/cancelride', {
+      const response = await axios.put("/api/customers/cancelride", {
         trip_id: tripId, // Assuming Tripid is part of the state
-        status:cancel,
-       
+        status: cancel,
       });
 
       if (!response.status == 200) {

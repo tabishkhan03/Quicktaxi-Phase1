@@ -35,7 +35,7 @@ const useAuth = () => {
     setLoading(true);
     setError("");
     const response = await supabase.auth.signUp({ email, password });
-    console.log(response.data);
+    // console.log(response.data);
     if (response.error) {
       setError(response.error.message);
       setLoading(false);
@@ -43,7 +43,7 @@ const useAuth = () => {
     }
 
     // After successful sign-up, insert user details into the appropriate table
-    await insertUserDetails(userType);
+    // await insertUserDetails(userType);
     setLoading(false);
   };
 
@@ -61,7 +61,7 @@ const useAuth = () => {
     }
 
     // After successful login, insert user details into the appropriate table
-    await insertUserDetails(userType);
+    // await insertUserDetails(userType);
     setLoading(false);
   };
 
@@ -90,41 +90,41 @@ const useAuth = () => {
     setLoading(false);
   };
 
-  const insertUserDetails = async (userType) => {
-    if (!user) return;
+  // const insertUserDetails = async (userType) => {
+  //   if (!user) return;
 
-    const userId = user.id;
-    console.log(user);
+  //   const userId = user.id;
+  //   console.log(user);
 
-    try {
-      if (userType === "customer") {
-        await prisma.customer.create({
-          data: {
-            customer_id: userId,
-            email: user.email,
-            name: "", // Add default or empty values as needed
-            phone: "", // Add default or empty values as needed
-            password: "", // Ensure to handle passwords properly
-            registration_date: new Date(),
-          },
-        });
-      } else if (userType === "driver") {
-        await prisma.driver.create({
-          data: {
-            driver_id: userId,
-            email: user.email,
-            name: "", // Add default or empty values as needed
-            phone: "", // Add default or empty values as needed
-            password: "", // Ensure to handle passwords properly
-            license_number: "", // Add default or empty values as needed
-            registration_date: new Date(),
-          },
-        });
-      }
-    } catch (err) {
-      setError("Error inserting user details: " + err.message);
-    }
-  };
+  //   try {
+  //     if (userType === "customer") {
+  //       await prisma.customer.create({
+  //         data: {
+  //           customer_id: userId,
+  //           email: user.email,
+  //           name: "", // Add default or empty values as needed
+  //           phone: "", // Add default or empty values as needed
+  //           password: "", // Ensure to handle passwords properly
+  //           registration_date: new Date(),
+  //         },
+  //       });
+  //     } else if (userType === "driver") {
+  //       await prisma.driver.create({
+  //         data: {
+  //           driver_id: userId,
+  //           email: user.email,
+  //           name: "", // Add default or empty values as needed
+  //           phone: "", // Add default or empty values as needed
+  //           password: "", // Ensure to handle passwords properly
+  //           license_number: "", // Add default or empty values as needed
+  //           registration_date: new Date(),
+  //         },
+  //       });
+  //     }
+  //   } catch (err) {
+  //     setError("Error inserting user details: " + err.message);
+  //   }
+  // };
 
   return {
     user,

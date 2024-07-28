@@ -7,6 +7,7 @@ import { CiLock } from "react-icons/ci";
 import { TfiEmail } from "react-icons/tfi";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import useAuth from "../../utils/useAuth"; // Import the custom hook
+import axios from "axios";
 
 function Sign() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,9 +31,22 @@ function Sign() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSignUp) {
-      await signUp(email, password, "customer");
+      console.log("Calling Auth SignUp");
+      const response = await signUp(email, password, "customer");
+      console.log("Response from Auth", response);
     } else {
       await logIn(email, password, "customer");
+    }
+
+    //Calling api to create user in the db
+    try {
+      const response = await axios.post("/api/customers/customerProfile", {
+        email: email,
+        password: password,
+      });
+      console.log(response.json());
+    } catch (error) {
+      console.log(error.message);
     }
   };
 
@@ -41,10 +55,10 @@ function Sign() {
   };
 
   // Redirect if user is authenticated
-  // if (user) {
-  //   window.location.href = "/home-new";
-  //   return null;
-  // }
+  if (user) {
+    window.location.href = "/home-new";
+    return null;
+  }
 
   return (
     <form onSubmit={handleSubmit}>

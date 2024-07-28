@@ -9,7 +9,7 @@ datasource db {
 
 model Customer {
   customer_id       String   @id @default(uuid())
-  name              String
+  name              String?
   email             String?  @unique
   phone             String?  @unique
   password          String
@@ -20,11 +20,11 @@ model Customer {
 
 model Driver {
   driver_id                 String   @id @default(uuid())
-  name                      String
+  name                      String?
   email                     String?  @unique
   phone                     String?  @unique
   password                  String
-  license_number            String   @unique
+  license_number            String?   @unique
   registration_date         DateTime @default(now())
   bank_document_type        String?
   bank_document_url         String?
