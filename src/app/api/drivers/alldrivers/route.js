@@ -1,4 +1,4 @@
-import { supabase } from "@/utils/supabase"; // Adjust the path as necessary
+import { supabase } from "../../../../utils/supabase"; // Adjust the path as necessary
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 

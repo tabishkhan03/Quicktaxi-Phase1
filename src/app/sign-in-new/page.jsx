@@ -32,33 +32,46 @@ function Sign() {
     e.preventDefault();
     if (isSignUp) {
       console.log("Calling Auth SignUp");
-      const response = await signUp(email, password, "customer");
+      const response = await signUp(email, password);
       console.log("Response from Auth", response);
+      if (response.data.user != null) {
+        try {
+          const res = await axios.post("/api/customers/customerProfile", {
+            email: email,
+            password: password,
+          });
+          console.log(res.data);
+        } catch (error) {
+          console.log(error.message);
+        }
+      }
     } else {
-      await logIn(email, password, "customer");
+      await logIn(email, password);
     }
 
     //Calling api to create user in the db
-    try {
-      const response = await axios.post("/api/customers/customerProfile", {
-        email: email,
-        password: password,
-      });
-      console.log(response.json());
-    } catch (error) {
-      console.log(error.message);
-    }
   };
 
   const handleOAuth = async (provider) => {
-    await signInWithOAuth(provider, "customer");
+    const response = await signInWithOAuth(provider, "customer");
+    if (response.data.user != null) {
+      try {
+        const res = await axios.post("/api/customers/customerProfile", {
+          email: email,
+          password: password,
+        });
+        console.log(res.data);
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
   };
 
-  // Redirect if user is authenticated
-  if (user) {
-    window.location.href = "/home-new";
-    return null;
-  }
+  // // Redirect if user is authenticated
+  // if (user) {
+  //   window.location.href = "/home-new";
+  //   return null;
+  // }
 
   return (
     <form onSubmit={handleSubmit}>

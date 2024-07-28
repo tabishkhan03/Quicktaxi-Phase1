@@ -7,6 +7,7 @@ import { CiLock } from "react-icons/ci";
 import { TfiEmail } from "react-icons/tfi";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import useAuth from "../../utils/useAuth"; // Import the custom hook
+import axios from "axios";
 
 function Sign() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,9 +31,21 @@ function Sign() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSignUp) {
-      await signUp(email, password, "driver");
+      const response = await signUp(email, password);
+      if (response.data.user != null) {
+        try {
+          const res = await axios.post("/api/drivers/driverProfile", {
+            email: email,
+            password: password,
+          });
+          console.log(res.data);
+        } catch (error) {
+          console.log(error.message);
+        }
+        window.location.href = "/signin-driver/upload-details";
+      }
     } else {
-      await logIn(email, password, "driver");
+      await logIn(email, password);
     }
   };
 
@@ -40,11 +53,11 @@ function Sign() {
     await signInWithOAuth(provider, "driver");
   };
 
-  // Redirect if user is authenticated
-  if (user) {
-    window.location.href = "/home-driver";
-    return null;
-  }
+  // // Redirect if user is authenticated
+  // if (user) {
+  //   window.location.href = "/home-driver";
+  //   return null;
+  // }
 
   return (
     <form onSubmit={handleSubmit}>
