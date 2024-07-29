@@ -1,15 +1,15 @@
 "use client";
 
 import { useContext, useEffect, useState } from "react";
-import Autocomplete from "./components/Autocomplete";
-import MapBlock from "./components/MapBlock";
+import Autocomplete from "@/app/components/Autocomplete";
+import MapBlock from "@/app/components/MapBlock";
 import { AppContext } from "../context/AppContext";
-import Cardata from "./components/carcard/Cardata";
+import Cardata from "@/app/components/carcard/Cardata";
 import { IoIosHome } from "react-icons/io";
 import { GiNotebook } from "react-icons/gi";
 import { FaWallet } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
-import UserCard from "./components/carcard/UserCard";
+import UserCard from "@/app/components/carcard/UserCard";
 import { AppProvider } from "../context/AppContext";
 
 function App() {
@@ -18,19 +18,37 @@ function App() {
   const [tripId, setTripId] = useState(null);
 
   const getUserLocation = () => {
-    navigator.geolocation.getCurrentPosition((pos) => {
-      dispatch({
-        type: "SET_USER_LOCATION",
-        payload: {
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const newLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          dispatch({
+            type: "SET_USER_LOCATION",
+            payload:newLocation
+          });
+          // console.log("Updated User Location:", newLocation);
         },
-      });
-    });
+        (error) => {
+          console.error("Error fetching location:", error.message);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
   };
 
   useEffect(() => {
+    // Fetch location initially
     getUserLocation();
+
+    // Set up an interval to fetch the location every 10 seconds
+    const intervalId = setInterval(getUserLocation, 5000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(intervalId);
   }, []);
 
   return (

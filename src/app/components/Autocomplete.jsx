@@ -90,12 +90,52 @@ const Autocomplete = () => {
     dispatch({ type: "SET_SOURCE_LOCATION", payload: null });
     dispatch({ type: "SET_DESTINATION_LOCATION", payload: null });
   };
+  const handleCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setSourceQuery("Current Location");
+          setSourceResults([]);
+          dispatch({
+            type: "SET_SOURCE_LOCATION",
+            payload: {
+              lng: longitude,
+              lat: latitude,
+            },
+          });
+          dispatch({
+            type: "SET_USER_LOCATION",
+            payload: {
+              lng: longitude,
+              lat: latitude,
+            },
+          });
+          dispatch({
+            type: "SET_SOURCE_NAME",
+            payload: "Current Location",
+          });
+        },
+        (error) => {
+          console.error("Error getting current location:", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+
+    console.log("Current Location")
+
+
+  };
+
 
   return (
     <div className="bg-slate-50 p-2 rounded-2xl">
       <div className="flex gap-6 items-center">
         <div>
-          <FaCircleDot size={25} className="text-yellow-400" />
+        <FaCircleDot onClick={handleCurrentLocation} size={25} className="text-yellow-400" />
+
         </div>
         <div className="relative">
           <input
