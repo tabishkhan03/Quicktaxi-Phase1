@@ -31,12 +31,11 @@ const NavigationDriverContent = () => {
             driver_id
           );
 
-          const response = await axios.post("/api/trips/confirmed-trip", {
+          const response = await axios.post("/api/trips/trip", {
             trip_id,
-            driver_id,
           });
 
-          const trip = response.data[0]; // Access the first item in the array
+          const trip = response.data; // Access the first item in the array
           console.log("trip ", trip);
 
           if (
