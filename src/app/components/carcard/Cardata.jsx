@@ -28,8 +28,8 @@ const Cardata = ({ setConfirm, setTripId }) => {
   };
 
   const fetchData = async () => {
-    const res = await fetch("/api/drivers/alldrivers");
-    const data = await res.json();
+    const { data } = await axios.get("/api/drivers/alldrivers");
+    console.log("Data after fetching", data);
     const finalData = data.map((driver) => ({
       driver: driver.name,
       taxi_id: driver.taxis[0]?.taxi_id,
@@ -39,6 +39,7 @@ const Cardata = ({ setConfirm, setTripId }) => {
       distance: driver.taxis[0]?.distance,
     }));
     setDriverData(finalData);
+    console.log("final data: ", finalData);
   };
 
   useEffect(() => {
@@ -96,29 +97,33 @@ const Cardata = ({ setConfirm, setTripId }) => {
                 </button>
               </div>
               <div className="max-h-64 overflow-y-scroll">
-                {driverData.map((cars, id) => (
-                  <div
-                    className={`flex justify-between px-2 border-1.5px border-gray-200 py-2 hover:bg-yellow-300 ${
-                      selectedDriver === cars ? "bg-yellow-200" : ""
-                    }`}
-                    key={id}
-                    onClick={() => setSelectedDriver(cars)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 text-center text-xl">{id}</div>
-                      <div>
-                        <p className="text-lg font-medium">{cars.name}</p>
-                        <p className="text-green-400">{cars.distance}</p>
+                {driverData.length > 0 ? (
+                  driverData.map((cars, id) => (
+                    <div
+                      className={`flex justify-between px-2 border-1.5px border-gray-200 py-2 hover:bg-yellow-300 ${
+                        selectedDriver === cars ? "bg-yellow-200" : ""
+                      }`}
+                      key={id}
+                      onClick={() => setSelectedDriver(cars)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 text-center text-xl">{id}</div>
+                        <div>
+                          <p className="text-lg font-medium">{cars.name}</p>
+                          <p className="text-green-400">{cars.distance}</p>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-center mx-2">
+                        <p className="text-xl font-medium">{cars.number}</p>
+                        <p className="text-green-400">
+                          rs.{getCost(cars.charge)}
+                        </p>
                       </div>
                     </div>
-                    <div className="flex flex-col items-center mx-2">
-                      <p className="text-xl font-medium">{cars.number}</p>
-                      <p className="text-green-400">
-                        rs.{getCost(cars.charge)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p>No drivers available</p>
+                )}
                 <hr className="border-2 border-yellow-400" />
                 <div className="fixed bottom-20 w-[95%] mx-3 left-0 bg-slate-300 z-40 border-t-orange-500 border-orange-500">
                   <div className="flex justify-between w-[70%] mx-auto">

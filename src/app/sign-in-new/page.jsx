@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaArrowLeft, FaArrowRight, FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { CiLock } from "react-icons/ci";
@@ -8,6 +8,7 @@ import { TfiEmail } from "react-icons/tfi";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import useAuth from "../../utils/useAuth"; // Import the custom hook
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 function Sign() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +16,13 @@ function Sign() {
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(true); // State to toggle between sign-up and login
   const { user, loading, error, signUp, logIn, signInWithOAuth } = useAuth(); // Destructure the auth functions
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/sign-in-new");
+    }
+  }, [user]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -45,8 +53,16 @@ function Sign() {
           console.log(error.message);
         }
       }
+      if (response.data.user.aud == "authenticated") {
+        router.push("/");
+      }
     } else {
-      await logIn(email, password);
+      console.log("login Called");
+      const response = await logIn(email, password);
+      console.log("Response from Auth Login", response);
+      if (response.data.user.aud == "authenticated") {
+        router.push("/");
+      }
     }
 
     //Calling api to create user in the db

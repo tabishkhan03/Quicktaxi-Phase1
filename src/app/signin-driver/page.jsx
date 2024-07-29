@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaArrowRight, FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { CiLock } from "react-icons/ci";
@@ -17,6 +17,12 @@ function Sign() {
   const [isSignUp, setIsSignUp] = useState(true); // State to toggle between sign-up and login
   const { user, loading, error, signUp, logIn, signInWithOAuth } = useAuth(); // Destructure the auth functions
   const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/signin-driver");
+    }
+  }, [user]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -51,7 +57,10 @@ function Sign() {
         }
       }
     } else {
-      await logIn(email, password);
+      const response = await logIn(email, password);
+      if (response.data.user.aud == "authenticated") {
+        router.push("/home-driver");
+      }
     }
   };
 

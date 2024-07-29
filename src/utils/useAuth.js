@@ -45,17 +45,17 @@ const useAuth = () => {
   const logIn = async (email, password) => {
     setLoading(true);
     setError("");
-    const { error } = await supabase.auth.signInWithPassword({
+    const response = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-    if (error) {
+    if (response.error) {
       setError(error.message);
       setLoading(false);
       return;
     }
-
     setLoading(false);
+    return response;
   };
 
   const logOut = async () => {
