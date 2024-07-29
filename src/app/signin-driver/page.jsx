@@ -8,6 +8,7 @@ import { TfiEmail } from "react-icons/tfi";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import useAuth from "../../utils/useAuth"; // Import the custom hook
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 function Sign() {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +16,7 @@ function Sign() {
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(true); // State to toggle between sign-up and login
   const { user, loading, error, signUp, logIn, signInWithOAuth } = useAuth(); // Destructure the auth functions
+  const router = useRouter();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -39,10 +41,14 @@ function Sign() {
             password: password,
           });
           console.log(res.data);
+          const { driver_id } = res.data.driver;
+          // Store driver_id in local storage
+          localStorage.setItem("driver_id", driver_id);
+          // Redirect to upload-details page
+          router.push("/signin-driver/upload-details");
         } catch (error) {
           console.log(error.message);
         }
-        window.location.href = "/signin-driver/upload-details";
       }
     } else {
       await logIn(email, password);
@@ -50,7 +56,23 @@ function Sign() {
   };
 
   const handleOAuth = async (provider) => {
-    await signInWithOAuth(provider, "driver");
+    const response = await signInWithOAuth(provider);
+    if (response.data.user != null) {
+      try {
+        const res = await axios.post("/api/drivers/driverProfile", {
+          email: email,
+          password: password,
+        });
+        console.log(res.data);
+        const { driver_id } = res.data.driver;
+        // Store driver_id in local storage
+        localStorage.setItem("driver_id", driver_id);
+        // Redirect to upload-details page
+        router.push("/signin-driver/upload-details");
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
   };
 
   // // Redirect if user is authenticated

@@ -68,7 +68,7 @@ const useAuth = () => {
     setLoading(false);
   };
 
-  const signInWithOAuth = async (provider, userType) => {
+  const signInWithOAuth = async (provider) => {
     setLoading(true);
     setError("");
     const response = await supabase.auth.signInWithOAuth({
@@ -76,7 +76,6 @@ const useAuth = () => {
       // options: { redirectTo: "/home-new" },
     });
     console.log(response.data);
-    await insertUserDetails(userType);
     if (response.error) {
       setError(response.error.message);
     }

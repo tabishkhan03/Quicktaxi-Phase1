@@ -174,7 +174,7 @@ function Sign() {
               </button>
               <button
                 type="button"
-                onClick={() => handleOAuth("apple")}
+                onClick={() => handleOAuth("github")}
                 className="text-2xl border p-2 bg-white rounded-full w-12 h-12 text-center shadow-lg shadow-indigo-500/40"
               >
                 <FaGithub />
