@@ -42,22 +42,29 @@ const HomeDriverPage = () => {
   const handleFindRide = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/trips/ready-trips", {
+      const uniqueId = Date.now(); // Unique identifier in milliseconds
+      const response = await fetch(`/api/trips/ready-trips?uniqueId=${uniqueId}`, {
         cache: "no-store",
+        headers: {
+          'Cache-Control': 'no-store',
+          'Pragma': 'no-cache',
+          'X-Custom-Revalidate': uniqueId // Custom header for revalidation
+        }
       });
       const data = await response.json();
       console.log("data ", data);
+      
       if (Array.isArray(data)) {
         setRideRequests(data);
       } else {
         console.error("Error: Fetched data is not an array", data);
         setRideRequests([]);
       }
-      setLoading(false);
     } catch (error) {
-      setLoading(false);
       console.error("Error fetching ready trips:", error);
       setRideRequests([]);
+    } finally {
+      setLoading(false);
     }
   };
 
