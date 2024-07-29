@@ -1,14 +1,14 @@
 "use client";
-import Header from "@/app/components/header";
+import Header from "../components/header";
 import React, { useState } from "react";
-import { topRides, localRides, categories } from "@/db/db";
+import { topRides, localRides, categories } from "../../db";
 
 //mui imports
 import SearchIcon from "@mui/icons-material/Search";
-import TopRideCard from "@/app/components/topRideCard";
-import LocalRideCard from "@/app/components/localRideCard";
-import Footer from "@/app/components/footer";
-import Category from "@/app/components/categories";
+import TopRideCard from "../components/topRideCard";
+import LocalRideCard from "../components/localRideCard";
+import Footer from "../components/footer";
+import Category from "../components/categories";
 
 function LandingPage() {
   const [search, setSearch] = useState("");

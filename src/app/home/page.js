@@ -1,8 +1,8 @@
 "use client";
 
-import Navbar from "@/app/components/nav-bar";
+import Navbar from "../components/nav-bar";
 import { useRouter } from "next/navigation";
-import { options } from "@/db/db";
+import { options } from "../../db/db";
 
 function Home() {
   const router = useRouter();

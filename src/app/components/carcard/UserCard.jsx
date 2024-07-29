@@ -36,20 +36,14 @@ const UserCard = ({ setConfirm, setTripId, tripId }) => {
     }
   };
 
-  const checkTripStatus = async (tripId) => {
+  const checkTripStatus = async () => {
     try {
-      const { data, error } = await supabase
-        .from("Trip")
-        .select("status")
-        .eq("trip_id", tripId)
-        .single();
-
-      if (error) {
-        console.error("Error fetching trip status:", error);
-        return null;
-      }
-
-      return data.status; // Return the status value
+      console.log("Checking trip status for trip ID:", tripId);
+      const response = await axios.post("/api/trips/confirmed-trip", { trip_id: tripId });
+      console.log("Confirmed trip status response:", response.data);
+      
+      // You can handle the response data here
+      return response.data.status;
     } catch (error) {
       console.error("Error in status check:", error);
       return null;
@@ -58,7 +52,7 @@ const UserCard = ({ setConfirm, setTripId, tripId }) => {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const status = await checkTripStatus(tripId);
+      const status = await checkTripStatus();
       if (status === "booked") {
         console.log("Trip status booked!");
         setTripStatus("booked");

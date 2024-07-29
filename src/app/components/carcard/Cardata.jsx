@@ -56,7 +56,7 @@ const Cardata = ({ setConfirm, setTripId }) => {
 
     try {
       const response = await axios.post("/api/customers/bookride", {
-        customer_id: 1,
+        customer_id: "51ab8a10-2b34-45a5-a7e1-67f22c7a472f",
         start_location: sourceName,
         end_location: destinationName,
         source_lat: sourceLocation.lat,
@@ -74,6 +74,7 @@ const Cardata = ({ setConfirm, setTripId }) => {
       const data = response.data;
       console.log("Data inserted successfully:", data);
       setTripId(data.trip.trip_id);
+      console.log("tripid ; ",data.trip.trip_id )
     } catch (error) {
       console.error("Error inserting data:", error);
     }
@@ -96,7 +97,7 @@ const Cardata = ({ setConfirm, setTripId }) => {
                   <SlArrowDown size={35} />
                 </button>
               </div>
-              <div className="max-h-64 overflow-y-scroll">
+              <div className="max-h-64 min-h-36 overflow-y-scroll">
                 {driverData.length > 0 ? (
                   driverData.map((cars, id) => (
                     <div

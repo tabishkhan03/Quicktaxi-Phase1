@@ -58,7 +58,9 @@ function Sign() {
       }
     } else {
       const response = await logIn(email, password);
+      console.log("resposne driver ",response)
       if (response.data.user.aud == "authenticated") {
+        localStorage.setItem("driver_id", response.data.user.id);
         router.push("/home-driver");
       }
     }

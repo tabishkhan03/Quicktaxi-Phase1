@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DIRECT_URL")
 }
 
 model Customer {
@@ -24,7 +24,7 @@ model Driver {
   email                     String?  @unique
   phone                     String?  @unique
   password                  String
-  license_number            String?   @unique
+  license_number            String?  @unique
   registration_date         DateTime @default(now())
   bank_document_type        String?
   bank_document_url         String?

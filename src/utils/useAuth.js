@@ -45,16 +45,19 @@ const useAuth = () => {
   const logIn = async (email, password) => {
     setLoading(true);
     setError("");
+    // console.log(email,password)
     const response = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+    console.log("error",response)
     if (response.error) {
       setError(error.message);
       setLoading(false);
       return;
     }
     setLoading(false);
+    console.log("response in authjs",response)
     return response;
   };
 

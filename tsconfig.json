@@ -25,6 +25,6 @@
     "**/*.tsx",
     "src/app/api/customers/customerProfile/route.js",
     "src/app/api/drivers/driverProfile/route.js"
-  ],
+, "src/app/api/customers/bookride/route.js"  ],
   "exclude": ["node_modules"]
 }
