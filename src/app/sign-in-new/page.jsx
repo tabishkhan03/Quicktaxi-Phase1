@@ -42,7 +42,7 @@ function Sign() {
       console.log("Calling Auth SignUp");
       const response = await signUp(email, password);
       console.log("Response from Auth", response);
-      if (response.data.user != null) {
+      if (response?.data.user != null) {
         try {
           const res = await axios.post("/api/customers/customerProfile", {
             email: email,
@@ -54,6 +54,8 @@ function Sign() {
         }
       }
       if (response.data.user.aud == "authenticated") {
+        ///add the phone number to the customer table and then redeiect to the home page
+        
         router.push("/");
       }
     } else {
