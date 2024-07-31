@@ -1,99 +1,90 @@
-import multer from "multer";
-import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { createClient } from "@supabase/supabase-js";
 
-// Initialize Prisma and Supabase clients
 const prisma = new PrismaClient();
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Configure multer for file handling
-const upload = multer({ storage: multer.memoryStorage() });
-
-// Helper function to run middleware
-const runMiddleware = (req, res, fn) => {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-      return resolve(result);
-    });
-  });
+export const config = {
+  api: {
+    bodyParser: false,
+  },
 };
 
-// Main handler function
-const handler = async (req, res) => {
-  if (req.method !== "PUT") {
-    res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
-    return;
-  }
-
+export async function PUT(req) {
   try {
-    // Run multer middleware to handle file uploads
-    await runMiddleware(
-      req,
-      res,
-      upload.fields([{ name: "license_front" }, { name: "license_back" }])
-    );
+    const formData = await req.formData();
+    console.log("FormData entries:", Array.from(formData.entries()));
 
-    const { files } = req;
-    const { driverId } = req.body;
+    const licenseFront = formData.get("license_front");
+    const licenseBack = formData.get("license_back");
+    const driverId = formData.get("driverId");
 
-    if (!files || !files.license_front || !files.license_back) {
-      res.status(400).json({ error: "Required files not provided" });
-      return;
+    console.log("Received license front:", licenseFront);
+    console.log("Received license back:", licenseBack);
+    console.log("Received driverId:", driverId);
+
+    if (!licenseFront || !licenseBack || !driverId) {
+      console.log("Missing required files or driverId");
+      return NextResponse.json(
+        {
+          error: "Required files or driverId not provided",
+          licenseFront: !!licenseFront,
+          licenseBack: !!licenseBack,
+          driverId: !!driverId,
+        },
+        { status: 400 }
+      );
     }
 
-    const frontFile = files.license_front[0];
-    const backFile = files.license_back[0];
-
     // Upload front license file to Supabase
-    const { data: frontData, error: frontError } = await supabase.storage
-      .from("driving-licenses")
-      .upload(`licenses/front/${frontFile.originalname}`, frontFile.buffer, {
-        contentType: frontFile.mimetype,
+    const frontBuffer = await licenseFront.arrayBuffer();
+    const { error: frontError } = await supabase.storage
+      .from("uploads")
+      .upload(`driver_licenses/front/${licenseFront.name}`, frontBuffer, {
+        contentType: licenseFront.type,
       });
 
     if (frontError) {
-      throw frontError;
+      console.log("Supabase upload error (front):", frontError);
+      return NextResponse.json({ error: frontError.message }, { status: 500 });
     }
 
     // Upload back license file to Supabase
-    const { data: backData, error: backError } = await supabase.storage
-      .from("driving-licenses")
-      .upload(`licenses/back/${backFile.originalname}`, backFile.buffer, {
-        contentType: backFile.mimetype,
+    const backBuffer = await licenseBack.arrayBuffer();
+    const { error: backError } = await supabase.storage
+      .from("uploads")
+      .upload(`driver_licenses/back/${licenseBack.name}`, backBuffer, {
+        contentType: licenseBack.type,
       });
 
     if (backError) {
-      throw backError;
+      console.log("Supabase upload error (back):", backError);
+      return NextResponse.json({ error: backError.message }, { status: 500 });
     }
 
     // Construct URLs for the uploaded files
-    const frontUrl = `${supabaseUrl}/storage/v1/object/public/uploads/driver-licenses/front/${frontFile.originalname}`;
-    const backUrl = `${supabaseUrl}/storage/v1/object/public/uploads/driver-licenses/back/${backFile.originalname}`;
+    const frontUrl = `${supabaseUrl}/storage/v1/object/public/uploads/driver_licenses/front/${licenseFront.name}`;
+    const backUrl = `${supabaseUrl}/storage/v1/object/public/uploads/driver_licenses/back/${licenseBack.name}`;
 
     // Update driver record in the database
-    const updatedDriver = await prisma.driver.update({
-      where: { driver_id: parseInt(driverId) },
+    await prisma.driver.update({
+      where: { driver_id: driverId },
       data: {
         driving_license_front_url: frontUrl,
         driving_license_back_url: backUrl,
       },
     });
 
-    res.json({ frontUrl, backUrl });
+    console.log("Driver license documents updated successfully");
+    return NextResponse.json({ frontUrl, backUrl });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error processing request:", error);
+    return NextResponse.json(
+      { error: "Server error", details: error.message },
+      { status: 500 }
+    );
   }
-};
-
-export default handler;
-
-export const config = {
-  api: {
-    bodyParser: false, // Disallow body parsing, so `multer` can handle it
-  },
-};
+}

@@ -1,78 +1,62 @@
-import multer from "multer";
-import { createClient } from "@supabase/supabase-js";
+import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { createClient } from "@supabase/supabase-js";
 
 const prisma = new PrismaClient();
-
-// Initialize Supabase client
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Configure multer
-const upload = multer({ storage: multer.memoryStorage() });
 
 export const config = {
   api: {
-    bodyParser: false, // Disallow body parsing, so `multer` can handle it
+    bodyParser: false,
   },
 };
 
-// Helper function to run middleware
-const runMiddleware = (req, res, fn) => {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result) => {
-      if (result instanceof Error) {
-        return reject(result);
-      }
-      return resolve(result);
-    });
-  });
-};
-
-const handler = async (req, res) => {
-  if (req.method !== "PUT") {
-    res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
-    return;
-  }
-
+export async function PUT(req) {
   try {
-    // Run multer middleware
-    await runMiddleware(req, res, upload.single("profile_pic"));
+    const formData = await req.formData();
+    const file = formData.get("profile_pic");
+    const driverId = formData.get("driverId");
 
-    const { file } = req;
+    console.log("Received file:", file);
+    console.log("Received driverId:", driverId);
 
-    // Manually parse the request body to get the driverId
-    const driverId = req.body.driverId;
-
-    if (!file) {
-      res.status(400).json({ error: "No file uploaded" });
-      return;
+    if (!file || !driverId) {
+      console.log("Missing file or driverId");
+      return NextResponse.json(
+        { error: "No file or driverId provided" },
+        { status: 400 }
+      );
     }
 
-    // Upload to Supabase storage
-    const { data, error } = await supabase.storage
+    // Convert file to buffer
+    const buffer = await file.arrayBuffer();
+
+    // Upload to Supabase
+    const { error: uploadError } = await supabase.storage
       .from("uploads")
-      .upload(`profile_pics/${file.originalname}`, file.buffer, {
-        contentType: file.mimetype,
+      .upload(`profile_pics/${file.name}`, buffer, {
+        contentType: file.type,
       });
 
-    if (error) {
-      throw error;
+    if (uploadError) {
+      console.log("Supabase upload error:", uploadError);
+      return NextResponse.json({ error: uploadError.message }, { status: 500 });
     }
 
-    const profilePicUrl = `${supabaseUrl}/storage/v1/object/public/uploads/profile_pics/${file.originalname}`;
+    const profilePicUrl = `${supabaseUrl}/storage/v1/object/public/uploads/profile_pics/${file.name}`;
 
-    // Update driver profile picture URL in the database
-    const updatedDriver = await prisma.driver.update({
-      where: { driver_id: parseInt(driverId) },
+    // Update the database
+    await prisma.driver.update({
+      where: { driver_id: driverId },
       data: { profile_pic_url: profilePicUrl },
     });
 
-    res.json({ profilePicUrl });
+    console.log("Profile updated successfully");
+    return NextResponse.json({ profilePicUrl });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error processing file upload:", error);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
-};
-
-export default handler;
+}

@@ -6,6 +6,11 @@ import Sign from "./Sign";
 import ButtonWithArrow from "./ButtonWithArrow";
 import Popup from "./Popup";
 import OtpVerify from "./OtpVerify";
+import LetsRoll from "./LetsRoll";
+import CompleteProfile from "./CompleteProfile";
+import EnterDetails from "./EnterDetails";
+import Upload from "./Upload";
+import Final from "./Final";
 
 export {
   ProfilePic,
@@ -16,4 +21,9 @@ export {
   ButtonWithArrow,
   Popup,
   OtpVerify,
+  LetsRoll,
+  CompleteProfile,
+  EnterDetails,
+  Upload,
+  Final,
 };

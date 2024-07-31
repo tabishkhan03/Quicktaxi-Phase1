@@ -2,17 +2,31 @@
 import React from "react";
 import { LiaPhoneSquareSolid } from "react-icons/lia";
 import { ButtonWithArrow } from "../components";
-import Link from "next/link";
 
-const Sign = ({ title, terms, bttnText, signUpPage }) => {
+const Sign = ({
+  title,
+  terms,
+  bttnText,
+  signUpPage,
+  handleSignUpChange,
+  onButtonClick,
+}) => {
   return (
     <>
       <div className="mb-2 flex flex-col gap-y-6">
-        <img
-          src="/driver/create-account.PNG"
-          alt="Create Account"
-          className="w-full sm:h-44 h-48 mt-10 ml-4"
-        />
+        {signUpPage ? (
+          <img
+            src="/driver/create-account.PNG"
+            alt="Create Account"
+            className="w-full sm:h-44 h-48 mt-10 ml-4"
+          />
+        ) : (
+          <img
+            src="/driver/login.PNG"
+            alt="login"
+            className="w-full sm:h-44 h-48 mt-10 ml-4"
+          />
+        )}
         <h3 className="sm:text-sm text-md text-black font-semibold w-full text-left">
           {title}
         </h3>
@@ -42,7 +56,6 @@ const Sign = ({ title, terms, bttnText, signUpPage }) => {
             {terms}
           </label>
         </div>
-
         <style jsx>{`
           input[type="checkbox"]:checked::before {
             content: "✔";
@@ -54,33 +67,31 @@ const Sign = ({ title, terms, bttnText, signUpPage }) => {
             border-radius: 50%;
           }
         `}</style>
-
-        <ButtonWithArrow name={bttnText} />
-
+        <ButtonWithArrow name={bttnText} onButtonClick={onButtonClick} />
         <div className="flex flex-row w-full justify-center">
           {signUpPage ? (
             <>
               <span className="sm:text-sm text-xs text-gray-600">
                 Already have an account?
               </span>
-              <Link
-                href={"/"}
+              <button
+                onClick={handleSignUpChange}
                 className="sm:text-sm text-xs text-black font-semibold"
               >
                 Login
-              </Link>
+              </button>
             </>
           ) : (
             <>
               <span className="sm:text-sm text-xs text-gray-600">
                 Don't have an account?
               </span>
-              <Link
-                href={"/"}
+              <button
+                onClick={handleSignUpChange}
                 className="sm:text-sm text-xs text-black font-semibold"
               >
                 Sign up
-              </Link>
+              </button>
             </>
           )}
         </div>

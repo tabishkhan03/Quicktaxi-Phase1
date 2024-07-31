@@ -29,7 +29,7 @@ const page = () => {
           </div>
           <div className="w-full flex justify-end">
             <Link
-              href="/getstarted-driver/createAccount"
+              href="/getstarted-driver/create-account"
               className="flex flex-row gap-2 bg-yellow-400 text-black hover:bg-yellow-500 rounded-3xl sm:w-3/4 w-fit h-8 text-center py-1 px-2 justify-between"
             >
               <span>Get Started</span>
