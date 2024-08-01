@@ -7,8 +7,12 @@ import { FaCarSide } from "react-icons/fa";
 import { FaCircleDot } from "react-icons/fa6";
 import { GrLocation } from "react-icons/gr";
 import { FaLongArrowAltDown } from "react-icons/fa";
+import { DriverContext } from "../../../context/DriverContext";
+import { AppContext } from "../../../context/AppContext";
 const RideConfirmation = () => {
   const [showMore, setShowMore] = useState(false);
+  const {Driverstate, dispatch} = useContext(DriverContext)
+  const{state}=useContext(AppContext);
 
   const toggleShowMore = () => {
     setShowMore(!showMore);
@@ -21,13 +25,13 @@ const RideConfirmation = () => {
           Your ride is confirmed
         </h2>
         <p className="text-center text-gray-600 mb-4">
-          Nitin will pick you up in 3 minutes
+          {Driverstate.driver} will pick you up  
         </p>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <p className="text-gray-800 font-medium">MP209056</p>
-            <p className="text-gray-600">Hyundai i20</p>
-            <p className="text-gray-600">Nitin Sahu</p>
+            <p className="text-gray-800 font-medium">{Driverstate.number}</p>
+            <p className="text-gray-600">{Driverstate.name}</p>
+            <p className="text-gray-600">{Driverstate.driver}</p>
             <p className="text-yellow-500">⭐ 4.1</p>
           </div>
           <div className="flex gap-4">
@@ -63,7 +67,7 @@ const RideConfirmation = () => {
               <div className="flex gap-4 p-1 items-center">
                 <FaCircleDot size={25} className="text-yellow-400" />
                 <div>
-                  <h1 className="h-7 overflow-y-hidden">Location</h1>
+                  <h1 className="h-7 overflow-y-hidden">{state.sourceName}</h1>
                 </div>
               </div>
 
@@ -71,7 +75,7 @@ const RideConfirmation = () => {
               <div className="flex gap-4 p-1 items-center">
                 <GrLocation size={28} className="text-green-500" />
                 <div>
-                  <h1 className="h-7 overflow-y-hidden">Location1</h1>
+                  <h1 className="h-7 overflow-y-hidden">{state.destinationName}</h1>
                 </div>
               </div>
             </div>

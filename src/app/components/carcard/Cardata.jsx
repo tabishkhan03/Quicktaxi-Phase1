@@ -1,13 +1,16 @@
 import React, { useState, useContext, useEffect } from "react";
 import { SlArrowUp, SlArrowDown } from "react-icons/sl";
 import { AppContext } from "../../../context/AppContext";
+
 import { MdOutlinePayment } from "react-icons/md";
 import { IoTicketSharp } from "react-icons/io5";
 import axios from "axios";
+import { DriverContext } from "../../../context/DriverContext";
 
 const Cardata = ({ setConfirm, setTripId }) => {
   const [menu, setMenu] = useState(true);
   const { state } = useContext(AppContext);
+  const {Driverstate, dispatch} = useContext(DriverContext)
   const {
     sourceLocation,
     destinationLocation,
@@ -38,6 +41,10 @@ const Cardata = ({ setConfirm, setTripId }) => {
       charge: driver.taxis[0]?.charge,
       distance: driver.taxis[0]?.distance,
     }));
+    dispatch({
+      type: "SET_DRIVER",
+      payload:finalData
+    });
     setDriverData(finalData);
     console.log("final data: ", finalData);
   };

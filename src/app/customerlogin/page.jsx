@@ -26,11 +26,12 @@ const Signin = () => {
     setGeneratedOtp(otpCode);
 
     try {
-      const response = await axios.post("/api/otp", {
+      const response = await axios.post("/api/phone_no/verify_otp", {
         phoneNumber,
         otp: otpCode,
       });
 
+      localStorage.setItem("phoneNumber", phoneNumber);
       if (response.status === 200) {
         setOtpSent(true);
         setPhoneNumber("");
@@ -44,17 +45,34 @@ const Signin = () => {
     }
   };
 
-  const handleOTPSubmit = (e) => {
+  const handleOTPSubmit = async (e) => {
     e.preventDefault();
-    if (otp === generatedOtp) {
-      setOtp("");
-      localStorage.setItem("phone_number", phoneNumber);
-      router.push("/");
-    } else {
-      alert("Invalid OTP");
+    try {
+      const phoneNumber = localStorage.getItem("phoneNumber");
+      const email = localStorage.getItem("email");
+  
+      if (!phoneNumber || !email) {
+        alert("Phone number or email is missing");
+        return;
+      }
+  
+      const response = await axios.post("/api/phone_no/verify_phone", {
+        phoneNumber: phoneNumber,
+        email: email,
+      });
+  
+      // Handle OTP verification
+      if (otp === generatedOtp) {
+        setOtp("");
+        router.push("/");
+      } else {
+        alert("Invalid OTP");
+      }
+    } catch (error) {
+      console.error(error, { message: "An error has occurred while storing Phone No" });
     }
   };
-
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <Head>

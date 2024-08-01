@@ -12,6 +12,8 @@ import { FaWallet } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import UserCard from "../app/components/carcard/UserCard";
 import { AppProvider } from "../context/AppContext";
+import {DriverProvider } from "../context/DriverContext";
+
 import { useRouter } from "next/navigation";
 
 function App() {
@@ -154,7 +156,9 @@ function App() {
 function AppWrapper() {
   return (
     <AppProvider>
+      <DriverProvider>
       <App />
+      </DriverProvider>
     </AppProvider>
   );
 }
