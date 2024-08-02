@@ -19,13 +19,11 @@ model Customer {
 }
 
 model Driver {
-  driver_id                 String   @id 
+  driver_id                 String   @id
   name                      String?
   email                     String?  @unique
   phone                     String?  @unique
   password                  String
-  city                      String?  
-  gender                    String?
   license_number            String?  @unique
   registration_date         DateTime @default(now())
   bank_document_type        String?
@@ -33,6 +31,8 @@ model Driver {
   driving_license_back_url  String?
   driving_license_front_url String?
   profile_pic_url           String?
+  city                      String?
+  gender                    String?
   ratings                   Rating[]
   taxis                     Taxi[]
   trips                     Trip[]
