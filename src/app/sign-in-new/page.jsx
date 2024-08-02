@@ -142,7 +142,7 @@ function Sign() {
       console.log("Login Called");
       const response = await logIn(email, password);
       console.log("Response from Auth Login", response);
-      if (response.data.user.aud === "authenticated") {
+      if (response.data?.user.aud === "authenticated") {
         localStorage.setItem("customer_id", response.data.user.id);
         localStorage.setItem("email", email);
         router.push("/");

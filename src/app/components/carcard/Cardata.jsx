@@ -1,13 +1,18 @@
 import React, { useState, useContext, useEffect } from "react";
 import { SlArrowUp, SlArrowDown } from "react-icons/sl";
 import { AppContext } from "../../../context/AppContext";
+import useFcmToken from "../../../hooks/useFcmToken"
 
+import NotificationManager from "../../../hooks/NotificationManager";
 import { MdOutlinePayment } from "react-icons/md";
 import { IoTicketSharp } from "react-icons/io5";
 import axios from "axios";
 import { DriverContext } from "../../../context/DriverContext";
-
+import {Toaster} from "../notification-ui/sonner"
 const Cardata = ({ setConfirm, setTripId }) => {
+  const { token, notificationPermissionStatus } = useFcmToken()
+
+
   const [menu, setMenu] = useState(true);
   const { state } = useContext(AppContext);
   const {Driverstate, dispatch} = useContext(DriverContext)
@@ -21,6 +26,30 @@ const Cardata = ({ setConfirm, setTripId }) => {
   const [driverData, setDriverData] = useState([]);
   const [selectedDriver, setSelectedDriver] = useState(null);
 
+ 
+  //handle notification
+  const handleTestNotification = async () => {
+    if (!token) {
+      console.error("No FCM token available");
+      return;
+    }
+    const response = await fetch("/api/send-notification", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: token,
+        title: "requested",
+        message: "request has been send to driver",
+        // link: "/contact",
+      }),
+    });
+
+    const data = await response.json();
+    console.log(data);
+  };
+  // handleTestNotification()
   const getCost = (charge) => {
     if (direction && direction.routes && direction.routes.length > 0) {
       const distanceInMiles = direction.routes[0].distance * 0.000621371192;
@@ -54,6 +83,7 @@ const Cardata = ({ setConfirm, setTripId }) => {
   }, []);
 
   const handleData = async () => {
+    handleTestNotification()
     if (!selectedDriver) {
       console.error("No driver selected");
       return;
@@ -61,6 +91,11 @@ const Cardata = ({ setConfirm, setTripId }) => {
 
     setConfirm(true);
 
+   //toaster notify
+ 
+  //  request has been send to driver
+
+// alert("ride has  been confirmed")
     try {
       const response = await axios.post("/api/customers/bookride", {
         customer_id: "51ab8a10-2b34-45a5-a7e1-67f22c7a472f",
@@ -89,6 +124,7 @@ const Cardata = ({ setConfirm, setTripId }) => {
 
   return (
     <div className="w-full">
+     <Toaster/>
       {sourceLocation && destinationLocation ? (
         <div className="z-10 w-full">
           {menu === false ? (
@@ -159,7 +195,9 @@ const Cardata = ({ setConfirm, setTripId }) => {
           )}
         </div>
       ) : null}
+        <NotificationManager />
     </div>
+   
   );
 };
 
