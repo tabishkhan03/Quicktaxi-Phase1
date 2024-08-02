@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   PrevPage,
   Sign,
@@ -30,25 +30,47 @@ const componentsList = [
 const Page = () => {
   const [signUpPage, setSignUpPage] = useState(true);
   const Router = useRouter();
+  const searchParams = useSearchParams();
+  const [driverId, setDriverId] = useState("");
+
+  useEffect(() => {
+    const driver_id = searchParams.get("driverId");
+    console.log("driver_id before setting in state variable:", driver_id);
+    setDriverId(driver_id);
+    console.log(driverId);
+  }, [searchParams]);
 
   const [componentHistory, setComponentHistory] = useState([componentsList[0]]);
   const [currentComponent, setCurrentComponent] = useState(componentsList[0]);
 
   console.log("Current component: ", currentComponent);
 
-  const handleButtonClick = async (apiCallFunction) => {
-    if (apiCallFunction) {
-      await apiCallFunction(); // Call the provided API function
+  const handleButtonClick = async (performApiCall) => {
+    if (performApiCall) {
+      console.log("performApiCall called");
+      const response = await performApiCall(); // Call the provided API function
+      if (response.status == 200) {
+        // Handle success state or feedback to the user
+        const currentIndex = componentsList.indexOf(currentComponent);
+        if (currentIndex < componentsList.length - 1) {
+          const nextComponent = componentsList[currentIndex + 1];
+          setComponentHistory((prevHistory) => [
+            ...prevHistory,
+            currentComponent,
+          ]);
+          setCurrentComponent(nextComponent);
+        }
+        console.log(
+          "Current component inside handleButton: ",
+          currentComponent
+        );
+      } else {
+        // Handle error state or feedback to the user
+        alert("Error in Uploading details please try again...");
+      }
     }
-    console.log("button clicked");
+    // console.log("button clicked");
     // Move to the next component
-    const currentIndex = componentsList.indexOf(currentComponent);
-    if (currentIndex < componentsList.length - 1) {
-      const nextComponent = componentsList[currentIndex + 1];
-      setComponentHistory((prevHistory) => [...prevHistory, currentComponent]);
-      setCurrentComponent(nextComponent);
-    }
-    console.log("Current component inside handleButton: ", currentComponent);
   };
 
   const handlePrevPageClick = () => {
@@ -82,6 +104,7 @@ const Page = () => {
             bttnText={signUpPage ? "Sign Up" : "Sign In"}
             signUpPage={signUpPage}
             handleSignUpChange={handleSignUpChange}
+            driverId={driverId}
           />
         );
       case "otpVerify":
@@ -103,6 +126,7 @@ const Page = () => {
             onButtonClick={() =>
               handleButtonClick(CompleteProfile.performApiCall)
             }
+            driverId={driverId}
           />
         );
       case "enterDetails":

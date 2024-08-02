@@ -1,10 +1,35 @@
 import React, { useState } from "react";
 import { IoChevronForward, IoPerson, IoBusinessOutline } from "react-icons/io5";
 import ButtonWithArrow from "./ButtonWithArrow";
+import axios from "axios";
 
-const CompleteProfile = ({ onButtonClick }) => {
+const CompleteProfile = ({ onButtonClick, driverId }) => {
+  const [name, setName] = useState("");
   const [gender, setGender] = useState("");
+  const [city, setCity] = useState("");
   const [agreed, setAgreed] = useState(false);
+
+  const performApiCall = async () => {
+    console.log("DriverId in CompleteProfile component: ", driverId);
+    console.log("data from this page: ", name, gender, city);
+    if (!name || !gender || !city) {
+      console.error("All fields are required.");
+      return;
+    }
+
+    try {
+      const response = await axios.put("/api/drivers/upload-basic", {
+        driver_id: driverId,
+        name,
+        gender,
+        city,
+      });
+      console.log("API response:", response.data);
+      return response;
+    } catch (error) {
+      console.error("Error in API call:", error);
+    }
+  };
 
   return (
     <div className="bg-white min-h-screen w-full flex flex-col items-center p-6 mt-8">
@@ -18,6 +43,8 @@ const CompleteProfile = ({ onButtonClick }) => {
             <IoPerson className="text-gray-400 mr-2" />
             <input
               type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               placeholder="Type your name here"
               className="w-full outline-none text-gray-700"
             />
@@ -49,6 +76,8 @@ const CompleteProfile = ({ onButtonClick }) => {
             <IoBusinessOutline className="text-gray-400 mr-2" />
             <input
               type="text"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
               placeholder="Search your city here"
               className="w-full outline-none text-gray-700"
             />
@@ -63,10 +92,19 @@ const CompleteProfile = ({ onButtonClick }) => {
             className="mt-1 mr-2"
           />
           <label className="text-sm">
-            By Accept , you agree to Company Term's & Conditions
+            By Accept, you agree to Company Term's & Conditions
           </label>
         </div>
-        <ButtonWithArrow name={"Continue"} onButtonClick={onButtonClick} />
+        <ButtonWithArrow
+          name={"Continue"}
+          onButtonClick={() => {
+            if (agreed) {
+              onButtonClick(performApiCall());
+            } else {
+              console.error("You must agree to terms & conditions.");
+            }
+          }}
+        />
       </div>
     </div>
   );

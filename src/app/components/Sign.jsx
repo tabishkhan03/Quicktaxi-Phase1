@@ -1,7 +1,9 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { LiaPhoneSquareSolid } from "react-icons/lia";
 import { ButtonWithArrow } from "../components";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const Sign = ({
   title,
@@ -10,7 +12,27 @@ const Sign = ({
   signUpPage,
   handleSignUpChange,
   onButtonClick,
+  driverId, // Added driverId as a prop
 }) => {
+  const [phoneNumber, setPhoneNumber] = useState(""); // Local state for phone number
+  const router = useRouter();
+
+  // const performApiCall = async () => {
+  //   if (signUpPage && phoneNumber) {
+  //     try {
+  //       const response = await axios.put("/api/auth/verify-phone", {
+  //         driverId,
+  //         phoneNumber,
+  //       });
+  //       console.log("API response:", response.data);
+  //       // Redirect or handle success
+  //     } catch (error) {
+  //       console.error("API call failed:", error);
+  //       // Handle error
+  //     }
+  //   }
+  // };
+
   return (
     <>
       <div className="mb-2 flex flex-col gap-y-6">
@@ -41,6 +63,8 @@ const Sign = ({
             type="number"
             className="pl-1 w-[80%] outline-none focus:ring-0"
             placeholder="Type your phone number"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)} // Update phone number on change
           />
         </div>
         <div className="w-full flex flex-row items-center justify-start gap-2 mt-2">

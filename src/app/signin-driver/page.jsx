@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaArrowLeft, FaArrowRight, FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { CiLock } from "react-icons/ci";
@@ -13,16 +13,24 @@ import { useRouter } from "next/navigation";
 function Sign() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
+  const [driverId, setDriverId] = useState("");
+  const [isDriverIdSet, setIsDriverIdSet] = useState(false);
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(true); // State to toggle between sign-up and login
   const { user, loading, error, signUp, logIn, signInWithOAuth } = useAuth(); // Destructure the auth functions
-  const router = useRouter();
+  const Router = useRouter();
 
   useEffect(() => {
     if (!user) {
-      router.push("/sign-in-new");
+      Router.push("/signin-driver");
     }
   }, [user]);
+
+  useEffect(() => {
+    if (driverId) {
+      setIsDriverIdSet(true); // Set flag to true when driverId is available
+    }
+  }, [driverId]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -38,46 +46,67 @@ function Sign() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (isSignUp) {
-      console.log("Calling Auth SignUp");
-      const response = await signUp(email, password);
-      console.log("Response from Auth", response);
-      if (response.data.user != null) {
+      try {
+        const response = await signUp(email, password);
+        console.log("signUp response:", response);
+        setDriverId(response.data.user.id);
+        console.log("driverID from response which is set in state:", driverId);
+      } catch (error) {
+        console.log(error.message);
+        return;
+      }
+    } else {
+      try {
+        const response = await logIn(email, password);
+        console.log("response driver ", response);
+        if (response.data.user.aud === "authenticated") {
+          localStorage.setItem("driver_id", response.data.user.id);
+          Router.push("/home-driver");
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+      return;
+    }
+  };
+
+  // Watch for driverId change and make API call when driverId is set
+  useEffect(() => {
+    const makeApiCall = async () => {
+      if (isDriverIdSet) {
         try {
-          const res = await axios.post("/api/customers/customerProfile", {
+          const res = await axios.post("/api/drivers/driver-profile", {
+            driver_id: driverId,
             email: email,
             password: password,
           });
           console.log(res.data);
+          Router.push(`/getstarted-driver/create-account?driverId=${driverId}`);
         } catch (error) {
           console.log(error.message);
         }
       }
-      if (response.data.user.aud == "authenticated") {
-        router.push("/");
-      }
-    } else {
-      console.log("login Called");
-      const response = await logIn(email, password);
-      console.log("Response from Auth Login", response);
-      if (response.data.user.aud == "authenticated") {
-        localStorage.setItem("customer_id", response.data.user.id);
-        router.push("/");
-      }
-    }
+    };
 
-    //Calling api to create user in the db
-  };
+    makeApiCall();
+  }, [isDriverIdSet]);
 
   const handleOAuth = async (provider) => {
-    const response = await signInWithOAuth(provider, "customer");
+    const response = await signInWithOAuth(provider);
     if (response.data.user != null) {
       try {
-        const res = await axios.post("/api/customers/customerProfile", {
+        const res = await axios.post("/api/drivers/driverProfile", {
           email: email,
           password: password,
         });
         console.log(res.data);
+        const { driver_id } = res.data.driver;
+        // Store driver_id in local storage
+        localStorage.setItem("driver_id", driver_id);
+        // Redirect to upload-details page
+        Router.push("/signin-driver/upload-details");
       } catch (error) {
         console.log(error.message);
       }
@@ -86,7 +115,7 @@ function Sign() {
 
   // // Redirect if user is authenticated
   // if (user) {
-  //   window.location.href = "/home-new";
+  //   window.location.href = "/home-driver";
   //   return null;
   // }
 
@@ -95,14 +124,16 @@ function Sign() {
       <div className="flex flex-col items-center justify-center mx-auto h-full gap-8">
         <div className="w-full md:mt-0 sm:max-w-md xl:p-0">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <FaArrowLeft className="size-9 w-9" />
+            <Link href={"/getstarted-driver"}>
+              <FaArrowLeft className="size-9 w-9" />
+            </Link>
             <p className="text-2xl font-bold leading-tight tracking-tight text-center">
               Getting Started!
             </p>
             <p className="w-full sm:text-md text-sm text-left text-black font-semibold mt-2">
-              Are you a Driver?{" "}
+              Are you a Customer?{" "}
               <Link
-                href={"/signin-driver"}
+                href={"/sign-in-new"}
                 className="cursor-pointer text-blue-800 font-bold"
               >
                 Yes!
@@ -191,7 +222,7 @@ function Sign() {
               </button>
               <button
                 type="button"
-                onClick={() => handleOAuth("github")}
+                onClick={() => handleOAuth("apple")}
                 className="text-2xl border p-2 bg-white rounded-full w-12 h-12 text-center shadow-lg shadow-indigo-500/40"
               >
                 <FaGithub />
