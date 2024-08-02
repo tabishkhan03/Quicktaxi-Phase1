@@ -1,18 +1,95 @@
-import React, { useState } from "react";
-import { IoChevronBack } from "react-icons/io5";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Popup from "./Popup";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { FiUpload } from "react-icons/fi";
 import ButtonWithArrow from "./ButtonWithArrow";
 
-const Upload = ({ title, instructions, subtitle, onButtonClick }) => {
-  const [file, setFile] = useState(null);
+const Upload = ({
+  title,
+  instructions,
+  subtitle,
+  onButtonClick,
+  maxFiles,
+  driverId,
+}) => {
+  const [files, setFiles] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    const selectedFiles = Array.from(e.target.files);
+    setFiles((prevFiles) => {
+      const newFiles = [...prevFiles, ...selectedFiles].slice(0, maxFiles);
+      return newFiles;
+    });
+  };
+
+  const removeFile = (index) => {
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
+
+  const performApiCall = async (title, files, driverId) => {
+    console.log("inside performApiCall", title);
+
+    try {
+      const formData = new FormData();
+
+      let apiEndpoint;
+      switch (title) {
+        case "Profile Picture":
+          console.log("Inside perform switch");
+          apiEndpoint = "/api/drivers/upload-profile";
+          formData.append("profile_pic", files[0]);
+          formData.append("driverId", driverId);
+          break;
+        case "Bank Account Details":
+          apiEndpoint = "/api/drivers/upload-bank-details";
+          formData.append("bank-document", files[0]);
+          formData.append("driverId", driverId);
+          break;
+        case "Driving License":
+          apiEndpoint = "/api/drivers/upload-driving-license";
+          formData.append("license_front", files[0]);
+          formData.append("license_back", files[1]);
+          formData.append("driverId", driverId);
+          break;
+        case "Taxi Details":
+          apiEndpoint = "/api/drivers/upload-taxi-images";
+          formData.append("photo_front", files[0]);
+          formData.append("photo_back", files[1]);
+          formData.append("photo_inside", files[2]);
+          formData.append("taxiId", taxiId);
+          break;
+        default:
+          throw new Error("Invalid upload type");
+      }
+
+      const response = await axios.put(apiEndpoint, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(`${title} uploaded successfully`);
+      if (response.status === 200) {
+        setFiles([]);
+        setShowPopup(true);
+        setTimeout(() => {
+          setShowPopup(false);
+        }, 5000);
+      }
+      return { status: response.status, data: response.data };
+    } catch (error) {
+      console.error(`Error uploading ${title}:`, error);
+      return {
+        status: error.response ? error.response.status : 500,
+        error: error.message,
+      };
+    }
   };
 
   return (
-    <div className="bg-white h-screen w-full max-w-md mx-auto flex flex-col mt-12">
+    <div className="bg-white h-screen w-full max-w-md mx-auto flex flex-col mt-12 overflow-auto">
+      {showPopup && <Popup />}
       <div className="px-4 flex-grow">
         <h2 className="text-xl text-center font-semibold mb-4">{title}</h2>
         <div className="space-y-2 mb-6">
@@ -39,29 +116,39 @@ const Upload = ({ title, instructions, subtitle, onButtonClick }) => {
               type="file"
               onChange={handleFileChange}
               className="hidden"
+              multiple={maxFiles > 1}
             />
           </label>
         </div>
-        {file && (
-          <div className="flex items-center bg-gray-100 p-2 rounded-lg">
+        {files.map((file, index) => (
+          <div
+            key={index}
+            className="flex items-center bg-gray-100 p-2 rounded-lg mb-2"
+          >
             <div className="w-12 h-12 bg-gray-300 rounded-lg mr-3"></div>
             <div>
-              <p className="text-sm font-medium text-gray-900">Profile</p>
+              <p className="text-sm font-medium text-gray-900">{file.name}</p>
               <p className="text-xs text-gray-500">
                 {(file.size / 1024).toFixed(2)} KB
               </p>
             </div>
             <button
-              onClick={() => setFile(null)}
+              onClick={() => removeFile(index)}
               className="ml-auto text-gray-400 hover:text-gray-500 text-xl"
             >
               ×
             </button>
           </div>
-        )}
+        ))}
       </div>
       <div className="p-4 mt-auto">
-        <ButtonWithArrow name={"Continue"} onButtonClick={onButtonClick} />
+        <ButtonWithArrow
+          name={"Continue"}
+          onButtonClick={() =>
+            onButtonClick(performApiCall(title, files, driverId))
+          }
+          disabled={files.length === 0 || files.length > maxFiles}
+        />
       </div>
     </div>
   );

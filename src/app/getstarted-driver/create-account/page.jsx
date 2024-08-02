@@ -47,30 +47,18 @@ const Page = () => {
 
   const handleButtonClick = async (performApiCall) => {
     if (performApiCall) {
-      console.log("performApiCall called");
-      const response = await performApiCall(); // Call the provided API function
-      if (response.status == 200) {
-        // Handle success state or feedback to the user
-        const currentIndex = componentsList.indexOf(currentComponent);
-        if (currentIndex < componentsList.length - 1) {
-          const nextComponent = componentsList[currentIndex + 1];
-          setComponentHistory((prevHistory) => [
-            ...prevHistory,
-            currentComponent,
-          ]);
-          setCurrentComponent(nextComponent);
-        }
-        console.log(
-          "Current component inside handleButton: ",
-          currentComponent
-        );
-      } else {
-        // Handle error state or feedback to the user
-        alert("Error in Uploading details please try again...");
-      }
+      // console.log("performApiCall called");
+      const { status, data } = await performApiCall(); // Call the provided API function
+      console.log(status, data);
     }
     // console.log("button clicked");
     // Move to the next component
+    const currentIndex = componentsList.indexOf(currentComponent);
+    if (currentIndex < componentsList.length - 1) {
+      const nextComponent = componentsList[currentIndex + 1];
+      setComponentHistory((prevHistory) => [...prevHistory, currentComponent]);
+      setCurrentComponent(nextComponent);
+    }
   };
 
   const handlePrevPageClick = () => {
@@ -146,6 +134,8 @@ const Page = () => {
               "The Selfie Should have the applicants Face Alone",
               "Upload PDF / JPEG / PNG",
             ]}
+            maxFiles={1}
+            driverId={driverId}
           />
         );
       case "uploadBank":
@@ -158,6 +148,8 @@ const Page = () => {
             ]}
             subtitle={"Attach Bank Account Details"}
             onButtonClick={() => handleButtonClick(Upload.performApiCall)}
+            maxFiles={1}
+            driverId={driverId}
           />
         );
       case "uploadLicense":
@@ -171,6 +163,8 @@ const Page = () => {
               "Only documents that are less than 10MB in size and in JPG, JPEG, PNG, or PDF format will be accepted",
               "The photos and all details must be clearly visible",
             ]}
+            maxFiles={2}
+            driverId={driverId}
           />
         );
       case "uploadTaxi":
@@ -184,6 +178,8 @@ const Page = () => {
               "Only documents that are less than 10MB in size and in JPG, JPEG, PNG, or PDF format will be accepted",
               "The photos and all details must be clearly visible",
             ]}
+            maxFiles={3}
+            driverId={driverId}
           />
         );
       case "submitted":
