@@ -71,7 +71,7 @@ const Upload = ({
           formData.append("photo_front", files[0]);
           formData.append("photo_back", files[1]);
           formData.append("photo_inside", files[2]);
-          formData.append("taxiId", taxiId);
+          formData.append("driverId", driverId);
           break;
         default:
           throw new Error("Invalid upload type");
