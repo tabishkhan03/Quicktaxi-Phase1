@@ -11,16 +11,40 @@ import {
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useState } from "react";
+import { Toaster } from "./../components/notification-ui/Sonner";
 
+import useFcmToken from "../../hooks/useFcmToken";
+
+import NotificationManager from "../../hooks/NotificationManager";
 const RideRequest = ({ request }) => {
   // const driver_id= localStorage.getItem("driver_id");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [driverId,setDriverID]=useState(localStorage.getItem("driver_id"))
-
+  const { token, notificationPermissionStatus } = useFcmToken();
   console.log(driverId)
+  const handleTestNotification = async () => {
+    if (!token) {
+      console.error("No FCM token available");
+      return;
+    }
+    const response = await fetch("/api/send-notification", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: token,
+        title: "Trip accepted",
+        message: "Ride Confirmed.",
+        // link: "/contact",
+      }),
+    });
 
+    const data = await response.json();
+    console.log(data);
+  };
   const handleAccept = async () => {
     setLoading(true);
     setError(null);
@@ -33,7 +57,10 @@ const RideRequest = ({ request }) => {
         driver_id:driverId,
       });
       if (response.status === 200) {
-        alert("Trip accepted");
+
+        handleTestNotification()
+        // alert("Trip accepted");
+
         const tripId = request.trip_id; 
       // const driverId = driver_id;
         // router.push("/navigation-driver");
@@ -63,6 +90,8 @@ const RideRequest = ({ request }) => {
 
       {request ? (
         <>
+          <Toaster />
+          <NotificationManager />
           <div className="flex items-center mb-4">
             <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mr-3">
               <FaUser className="text-2xl text-gray-600" />
