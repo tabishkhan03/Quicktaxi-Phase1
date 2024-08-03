@@ -32,7 +32,7 @@ const NavigationDriverContent = () => {
           );
 
           const response = await axios.post("/api/trips/trip", {
-            trip_id
+            trip_id,
           });
 
           const trip = response.data; // Access the first item in the array
