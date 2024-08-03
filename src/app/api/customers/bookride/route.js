@@ -1,4 +1,3 @@
-
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -45,7 +44,7 @@ export async function POST(request) {
         { status: 400 }
       );
     }
-
+    console.log("Before creation of the trip");
     const newTrip = await prisma.trip.create({
       data: {
         customer_id,
@@ -59,7 +58,6 @@ export async function POST(request) {
         start_time: new Date(start_time),
       },
     });
-
     console.log("New trip booked:", newTrip);
 
     return new Response(
