@@ -32,6 +32,7 @@ const useAuth = () => {
     setLoading(true);
     setError("");
     const response = await supabase.auth.signUp({ email, password });
+    console.log(response.data);
     if (response.error) {
       setError(response.error.message);
       setLoading(false);

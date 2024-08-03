@@ -1,4 +1,4 @@
-import Navbar from "../components/nav-bar/index";
+import Navbar from "../components/nav-bar";
 
 import { vehicles } from "../../db/db";
 function SearchPage() {

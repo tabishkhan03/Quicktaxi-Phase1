@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "../components/nav-bar/index";
+import Navbar from "../components/nav-bar";
 import { useRouter } from "next/navigation";
 import { options } from "../../db/db";
 

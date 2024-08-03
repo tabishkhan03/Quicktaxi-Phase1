@@ -9,7 +9,8 @@ export const AppProvider = ({ children }) => {
     destinationLocation: null,
     direction: [],
     sourceName:null,
-    destinationName:null // Add tripid to the initial state if it's part of your state
+    destinationName:null
+     // Add tripid to the initial state if it's part of your state
   };
 
   function reducer(state, action) {

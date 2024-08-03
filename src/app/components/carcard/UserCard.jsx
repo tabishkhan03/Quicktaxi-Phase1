@@ -3,18 +3,44 @@ import { FaCircleDot } from "react-icons/fa6";
 import { GrLocation } from "react-icons/gr";
 import { AppContext } from "../../../context/AppContext";
 import RideConfirmed from "./RideConfirmed";
+import { Toaster } from "../notification-ui/sonner";
 import { supabase } from "../../../utils/supabase";
+import useFcmToken from "../../../hooks/useFcmToken";
 import axios from "axios";
-
+import NotificationManager from "../../../hooks/NotificationManager";
 const UserCard = ({ setConfirm, setTripId, tripId }) => {
+  const { token, notificationPermissionStatus } = useFcmToken();
   const { state, dispatch } = useContext(AppContext);
   const { sourceName, destinationName } = state;
   const [cancel, setCancel] = useState("cancelled");
 
   const [tripStatus, setTripStatus] = useState(null);
+  const handleTestNotification = async () => {
+    if (!token) {
+      console.error("No FCM token available");
+      return;
+    }
+    const response = await fetch("/api/send-notification", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: token,
+        title: "cancelled",
+        message: "ride has been cancelled.",
+        // link: "/contact",
+      }),
+    });
 
+    const data = await response.json();
+    console.log(data);
+  };
   const handlecancel = async () => {
     setConfirm(false);
+    handleTestNotification();
+    //toaster notify
+    //ride has been cancelled.
 
     try {
       const response = await axios.put("/api/customers/cancelride", {
@@ -36,20 +62,16 @@ const UserCard = ({ setConfirm, setTripId, tripId }) => {
     }
   };
 
-  const checkTripStatus = async (tripId) => {
+  const checkTripStatus = async () => {
     try {
-      const { data, error } = await supabase
-        .from("Trip")
-        .select("status")
-        .eq("trip_id", tripId)
-        .single();
+      console.log("Checking trip status for trip ID:", tripId);
+      const response = await axios.post("/api/trips/confirmed-trip", {
+        trip_id: tripId,
+      });
+      console.log("Confirmed trip status response:", response.data);
 
-      if (error) {
-        console.error("Error fetching trip status:", error);
-        return null;
-      }
-
-      return data.status; // Return the status value
+      // You can handle the response data here
+      return response.data.status;
     } catch (error) {
       console.error("Error in status check:", error);
       return null;
@@ -58,7 +80,7 @@ const UserCard = ({ setConfirm, setTripId, tripId }) => {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const status = await checkTripStatus(tripId);
+      const status = await checkTripStatus();
       if (status === "booked") {
         console.log("Trip status booked!");
         setTripStatus("booked");
@@ -74,6 +96,8 @@ const UserCard = ({ setConfirm, setTripId, tripId }) => {
 
   return (
     <div>
+      <Toaster />
+      <NotificationManager />
       {tripStatus === "booked" ? (
         <RideConfirmed />
       ) : (

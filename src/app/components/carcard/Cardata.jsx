@@ -1,13 +1,21 @@
 import React, { useState, useContext, useEffect } from "react";
 import { SlArrowUp, SlArrowDown } from "react-icons/sl";
 import { AppContext } from "../../../context/AppContext";
+import useFcmToken from "../../../hooks/useFcmToken"
+
+import NotificationManager from "../../../hooks/NotificationManager";
 import { MdOutlinePayment } from "react-icons/md";
 import { IoTicketSharp } from "react-icons/io5";
 import axios from "axios";
-
+import { DriverContext } from "../../../context/DriverContext";
+import {Toaster} from "../notification-ui/sonner"
 const Cardata = ({ setConfirm, setTripId }) => {
+  const { token, notificationPermissionStatus } = useFcmToken()
+
+
   const [menu, setMenu] = useState(true);
   const { state } = useContext(AppContext);
+  const {Driverstate, dispatch} = useContext(DriverContext)
   const {
     sourceLocation,
     destinationLocation,
@@ -18,6 +26,30 @@ const Cardata = ({ setConfirm, setTripId }) => {
   const [driverData, setDriverData] = useState([]);
   const [selectedDriver, setSelectedDriver] = useState(null);
 
+ 
+  //handle notification
+  const handleTestNotification = async () => {
+    if (!token) {
+      console.error("No FCM token available");
+      return;
+    }
+    const response = await fetch("/api/send-notification", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: token,
+        title: "requested",
+        message: "request has been send to driver",
+        // link: "/contact",
+      }),
+    });
+
+    const data = await response.json();
+    console.log(data);
+  };
+  // handleTestNotification()
   const getCost = (charge) => {
     if (direction && direction.routes && direction.routes.length > 0) {
       const distanceInMiles = direction.routes[0].distance * 0.000621371192;
@@ -28,8 +60,8 @@ const Cardata = ({ setConfirm, setTripId }) => {
   };
 
   const fetchData = async () => {
-    const res = await fetch("/api/drivers/alldrivers");
-    const data = await res.json();
+    const { data } = await axios.get("/api/drivers/alldrivers");
+    console.log("Data after fetching", data);
     const finalData = data.map((driver) => ({
       driver: driver.name,
       taxi_id: driver.taxis[0]?.taxi_id,
@@ -38,7 +70,12 @@ const Cardata = ({ setConfirm, setTripId }) => {
       charge: driver.taxis[0]?.charge,
       distance: driver.taxis[0]?.distance,
     }));
+    dispatch({
+      type: "SET_DRIVER",
+      payload:finalData
+    });
     setDriverData(finalData);
+    console.log("final data: ", finalData);
   };
 
   useEffect(() => {
@@ -46,6 +83,7 @@ const Cardata = ({ setConfirm, setTripId }) => {
   }, []);
 
   const handleData = async () => {
+    handleTestNotification()
     if (!selectedDriver) {
       console.error("No driver selected");
       return;
@@ -53,9 +91,14 @@ const Cardata = ({ setConfirm, setTripId }) => {
 
     setConfirm(true);
 
+   //toaster notify
+ 
+  //  request has been send to driver
+
+// alert("ride has  been confirmed")
     try {
       const response = await axios.post("/api/customers/bookride", {
-        customer_id: 1,
+        customer_id: "51ab8a10-2b34-45a5-a7e1-67f22c7a472f",
         start_location: sourceName,
         end_location: destinationName,
         source_lat: sourceLocation.lat,
@@ -73,6 +116,7 @@ const Cardata = ({ setConfirm, setTripId }) => {
       const data = response.data;
       console.log("Data inserted successfully:", data);
       setTripId(data.trip.trip_id);
+      console.log("tripid ; ",data.trip.trip_id )
     } catch (error) {
       console.error("Error inserting data:", error);
     }
@@ -80,6 +124,7 @@ const Cardata = ({ setConfirm, setTripId }) => {
 
   return (
     <div className="w-full">
+     <Toaster/>
       {sourceLocation && destinationLocation ? (
         <div className="z-10 w-full">
           {menu === false ? (
@@ -95,30 +140,34 @@ const Cardata = ({ setConfirm, setTripId }) => {
                   <SlArrowDown size={35} />
                 </button>
               </div>
-              <div className="max-h-64 overflow-y-scroll">
-                {driverData.map((cars, id) => (
-                  <div
-                    className={`flex justify-between px-2 border-1.5px border-gray-200 py-2 hover:bg-yellow-300 ${
-                      selectedDriver === cars ? "bg-yellow-200" : ""
-                    }`}
-                    key={id}
-                    onClick={() => setSelectedDriver(cars)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 text-center text-xl">{id}</div>
-                      <div>
-                        <p className="text-lg font-medium">{cars.name}</p>
-                        <p className="text-green-400">{cars.distance}</p>
+              <div className="max-h-64 min-h-36 overflow-y-scroll">
+                {driverData.length > 0 ? (
+                  driverData.map((cars, id) => (
+                    <div
+                      className={`flex justify-between px-2 border-1.5px border-gray-200 py-2 hover:bg-yellow-300 ${
+                        selectedDriver === cars ? "bg-yellow-200" : ""
+                      }`}
+                      key={id}
+                      onClick={() => setSelectedDriver(cars)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 text-center text-xl">{id}</div>
+                        <div>
+                          <p className="text-lg font-medium">{cars.name}</p>
+                          <p className="text-green-400">{cars.distance}</p>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-center mx-2">
+                        <p className="text-xl font-medium">{cars.number}</p>
+                        <p className="text-green-400">
+                          rs.{getCost(cars.charge)}
+                        </p>
                       </div>
                     </div>
-                    <div className="flex flex-col items-center mx-2">
-                      <p className="text-xl font-medium">{cars.number}</p>
-                      <p className="text-green-400">
-                        rs.{getCost(cars.charge)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p>No drivers available</p>
+                )}
                 <hr className="border-2 border-yellow-400" />
                 <div className="fixed bottom-20 w-[95%] mx-3 left-0 bg-slate-300 z-40 border-t-orange-500 border-orange-500">
                   <div className="flex justify-between w-[70%] mx-auto">
@@ -146,7 +195,9 @@ const Cardata = ({ setConfirm, setTripId }) => {
           )}
         </div>
       ) : null}
+        <NotificationManager />
     </div>
+   
   );
 };
 

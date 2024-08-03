@@ -13,23 +13,29 @@ import axios from "axios";
 import { useState } from "react";
 
 const RideRequest = ({ request }) => {
+  // const driver_id= localStorage.getItem("driver_id");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [driverId,setDriverID]=useState(localStorage.getItem("driver_id"))
+
+  console.log(driverId)
 
   const handleAccept = async () => {
     setLoading(true);
     setError(null);
-
+    console.log("request ",request)
     try {
+    
+      // console.log("driver id",driver_id)
       const response = await axios.put("/api/trips/accept-trip", {
         trip_id: request.trip_id,
-        driver_id: request.driver_id,
+        driver_id:driverId,
       });
       if (response.status === 200) {
         alert("Trip accepted");
         const tripId = request.trip_id; 
-      const driverId = request.driver_id;
+      // const driverId = driver_id;
         // router.push("/navigation-driver");
         router.push(`/navigation-driver?trip_id=${tripId}&driver_id=${driverId}`);
         // router.push({

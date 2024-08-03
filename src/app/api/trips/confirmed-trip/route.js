@@ -4,19 +4,24 @@ const prisma = new PrismaClient();
 
 export async function POST(request) {
   try {
-    const { trip_id, driver_id } = await request.json();
-    const bookedTrips = await prisma.trip.findMany({
+    const { trip_id } = await request.json();
+    console.log("Received trip_id:", trip_id);
+    
+    const bookedTrip = await prisma.trip.findUnique({
       where: { 
-        trip_id: parseInt(trip_id),
-        driver_id: parseInt(driver_id),
-        status: "booked"
-     },
+        trip_id: trip_id,
+      },
+      select: {
+        status: true
+      }
     });
-    console.log("booked trip ", bookedTrips);
+    
+    console.log("Booked trip status:", bookedTrip);
 
-    return new Response(JSON.stringify(bookedTrips), { status: 200 });
+    return new Response(JSON.stringify(bookedTrip), { status: 200 });
   } catch (error) {
-    return new Response(JSON.stringify({ error: "Unable to fetch trips" }), {
+    console.error("Error fetching trip:", error);
+    return new Response(JSON.stringify({ error: "Unable to fetch trip" }), {
       status: 500,
     });
   }

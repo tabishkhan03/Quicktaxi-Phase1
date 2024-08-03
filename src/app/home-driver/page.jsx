@@ -42,7 +42,9 @@ const HomeDriverPage = () => {
   const handleFindRide = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/trips/ready-trips");
+      const response = await fetch("/api/trips/ready-trips", {
+        cache: "no-store",
+      });
       const data = await response.json();
       console.log("data ", data);
       if (Array.isArray(data)) {

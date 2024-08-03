@@ -6,9 +6,11 @@ export async function PUT(request) {
   try {
     const { trip_id, driver_id } = await request.json();
 
+    console.log("driver id ",driver_id)
+
     const trip = await prisma.trip.findFirst({
       where: {
-        trip_id: parseInt(trip_id),
+        trip_id: trip_id,
         status: 'ready',
       },
     });
@@ -18,9 +20,11 @@ export async function PUT(request) {
     }
 
     const updatedTrip = await prisma.trip.update({
-      where: { trip_id: parseInt(trip_id) },
-      data: { status: 'booked', driver_id: parseInt(driver_id) },
+      where: { trip_id: trip_id },
+      data: { status: 'booked', driver_id: driver_id },
     });
+
+    console.log("updated trip ",updatedTrip)
 
     return new Response(JSON.stringify(updatedTrip), { status: 200 });
   } catch (error) {

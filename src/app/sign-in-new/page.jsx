@@ -36,6 +36,85 @@ function Sign() {
     setPassword(e.target.value);
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (isSignUp) {
+  //     console.log("Calling Auth SignUp");
+  //     const response = await signUp(email, password);
+  //     console.log("Response from Auth", response);
+  //     if (response.data.user != null) {
+  //       try {
+  //         const res = await axios.post("/api/customers/customerProfile", {
+  //           email: email,
+  //           password: password,
+  //         });
+  //         console.log(res.data);
+  //         localStorage.setItem("email", email);
+  //       } catch (error) {
+  //         console.log(error.message);s
+  //       }
+  //     }
+  //     if (response.data.user.aud == "authenticated") {
+  //       router.push("/");
+  //     }
+  //   } else {
+  //     console.log("login Called");
+  //     const response = await logIn(email, password);
+  //     console.log("Response from Auth Login", response);
+  //     if (response.data.user.aud == "authenticated") {
+
+  //       localStorage.setItem("customer_id", response.data.user.id);
+  //       localStorage.setItem("email", email);
+  //       router.push("/");
+  //     }
+  //   }
+
+  //   //Calling api to create user in the db
+  // };
+
+  // const handleOAuth = async (provider) => {
+  //   const response = await signInWithOAuth(provider, "customer");
+  //   if (response.data.user != null) {
+  //     try {
+  //       const res = await axios.post("/api/customers/customerProfile", {
+  //         email: email,
+  //         password: password,
+  //       });
+  //       console.log(res.data);
+  //     } catch (error) {
+  //       console.log(error.message);
+  //     }
+  //   }
+  // };
+
+  const handleOAuth = async (provider) => {
+    const response = await signInWithOAuth(provider, "customer");
+    console.log("Response from OAuth", response);
+    if (response.data.user != null) {
+      try {
+        const email = response.data.user.email; // Get email from the response
+        const userId = response.data.user.id; // Get user id from the response
+
+        const res = await axios.post("/api/customers/customerProfile", {
+          email: email, // Use the email from the response
+        });
+        console.log(res.data);
+
+        // Store user details in localStorage
+        localStorage.setItem("customer_id", userId);
+        localStorage.setItem("email", email);
+
+        console.log(email);
+
+        if (response.data.user.aud === "authenticated") {
+          router.push("/");
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSignUp) {
@@ -49,37 +128,24 @@ function Sign() {
             password: password,
           });
           console.log(res.data);
+          localStorage.setItem("email", email);
+          localStorage.setItem("customer_id", response.data.user.id);
+          console.log(email);
         } catch (error) {
           console.log(error.message);
         }
-      }
-      if (response.data.user.aud == "authenticated") {
-        router.push("/");
+        if (response.data.user.aud === "authenticated") {
+          router.push("/");
+        }
       }
     } else {
-      console.log("login Called");
+      console.log("Login Called");
       const response = await logIn(email, password);
       console.log("Response from Auth Login", response);
-      if (response.data.user.aud == "authenticated") {
+      if (response.data?.user.aud === "authenticated") {
         localStorage.setItem("customer_id", response.data.user.id);
+        localStorage.setItem("email", email);
         router.push("/");
-      }
-    }
-
-    //Calling api to create user in the db
-  };
-
-  const handleOAuth = async (provider) => {
-    const response = await signInWithOAuth(provider, "customer");
-    if (response.data.user != null) {
-      try {
-        const res = await axios.post("/api/customers/customerProfile", {
-          email: email,
-          password: password,
-        });
-        console.log(res.data);
-      } catch (error) {
-        console.log(error.message);
       }
     }
   };
