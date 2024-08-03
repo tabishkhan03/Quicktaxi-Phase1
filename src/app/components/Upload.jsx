@@ -15,7 +15,7 @@ const Upload = ({
 }) => {
   const [files, setFiles] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
-  const [popupDetails,setPopupDetails]=useState({imageSrc:"",text:""});
+  const [popupDetails, setPopupDetails] = useState({ imageSrc: "", text: "" });
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -42,20 +42,29 @@ const Upload = ({
           apiEndpoint = "/api/drivers/upload-profile";
           formData.append("profile_pic", files[0]);
           formData.append("driverId", driverId);
-          setPopupDetails({imageSrc:"/driver/profilePopup.PNG",text:"Great job! Your profile is complete. Now, let's move on to secure your payments by adding your bank details."})
+          setPopupDetails({
+            imageSrc: "/driver/profilePopup.PNG",
+            text: "Great job! Your profile is complete. Now, let's move on to secure your payments by adding your bank details.",
+          });
           break;
         case "Bank Account Details":
           apiEndpoint = "/api/drivers/upload-bank-details";
           formData.append("bank-document", files[0]);
           formData.append("driverId", driverId);
-          setPopupDetails({imageSrc:"/driver/bankPopup.PNG",text:"Awesome! Your bank details are all set.Next, let's make sure we have your driving details to keep you on the road safely."})
+          setPopupDetails({
+            imageSrc: "/driver/bankPopup.PNG",
+            text: "Awesome! Your bank details are all set.Next, let's make sure we have your driving details to keep you on the road safely.",
+          });
           break;
         case "Driving License":
           apiEndpoint = "/api/drivers/upload-driving-license";
           formData.append("license_front", files[0]);
           formData.append("license_back", files[1]);
           formData.append("driverId", driverId);
-          setPopupDetails({imageSrc:"/driver/drivingLicensePopup.PNG",text:"Well done! Your driving details are updated. Finally, let's add your taxi information to complete your profile."})
+          setPopupDetails({
+            imageSrc: "/driver/drivingLicensePopup.PNG",
+            text: "Well done! Your driving details are updated. Finally, let's add your taxi information to complete your profile.",
+          });
           break;
         case "Taxi Details":
           apiEndpoint = "/api/drivers/upload-taxi-images";
@@ -67,21 +76,37 @@ const Upload = ({
         default:
           throw new Error("Invalid upload type");
       }
-
-      const response = await axios.put(apiEndpoint, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log(`${title} uploaded successfully`);
-      if (response.status === 200) {
-        setFiles([]);
-        setShowPopup(true);
-        setTimeout(() => {
-          setShowPopup(false);
-        }, 5000);
+      if (title != "Taxi Details") {
+        const response = await axios.put(apiEndpoint, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        console.log(`${title} uploaded successfully`);
+        if (response.status === 200) {
+          setFiles([]);
+          setShowPopup(true);
+          setTimeout(() => {
+            setShowPopup(false);
+          }, 5000);
+        }
+        return { status: response.status, data: response.data };
+      } else {
+        const response = await axios.post(apiEndpoint, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        console.log(`${title} uploaded successfully`);
+        if (response.status === 200) {
+          setFiles([]);
+          setShowPopup(true);
+          setTimeout(() => {
+            setShowPopup(false);
+          }, 5000);
+        }
+        return { status: response.status, data: response.data };
       }
-      return { status: response.status, data: response.data };
     } catch (error) {
       console.error(`Error uploading ${title}:`, error);
       return {
@@ -93,7 +118,9 @@ const Upload = ({
 
   return (
     <div className="bg-white h-screen w-full max-w-md mx-auto flex flex-col mt-12 overflow-auto">
-      {showPopup && <Popup imageSrc={popupDetails.imageSrc} text={popupDetails.text} />}
+      {showPopup && (
+        <Popup imageSrc={popupDetails.imageSrc} text={popupDetails.text} />
+      )}
       <div className="px-4 flex-grow">
         <h2 className="text-xl text-center font-semibold mb-4">{title}</h2>
         <div className="space-y-2 mb-6">
