@@ -41,10 +41,10 @@ model Driver {
 model Taxi {
   taxi_id          String    @id @default(uuid())
   driver_id        String
-  license_plate    String    @unique
-  model            String
-  make             String
-  year             Int
+  license_plate    String?    @unique
+  model            String?
+  make             String?
+  year             Int?
   color            String?
   charge           Float?
   distance         String?

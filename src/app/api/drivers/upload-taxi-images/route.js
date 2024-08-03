@@ -13,7 +13,7 @@ export const config = {
   },
 };
 
-export async function PUT(req) {
+export async function POST(req) {
   try {
     const formData = await req.formData();
     console.log("FormData entries:", Array.from(formData.entries()));
@@ -21,22 +21,22 @@ export async function PUT(req) {
     const photoFront = formData.get("photo_front");
     const photoBack = formData.get("photo_back");
     const photoInside = formData.get("photo_inside");
-    const taxiId = formData.get("taxiId");
+    const driverId = formData.get("driverId");
 
     console.log("Received photo front:", photoFront);
     console.log("Received photo back:", photoBack);
     console.log("Received photo inside:", photoInside);
-    console.log("Received taxiId:", taxiId);
+    console.log("Received driverId:", driverId);
 
-    if (!photoFront || !photoBack || !photoInside || !taxiId) {
-      console.log("Missing required files or taxiId");
+    if (!photoFront || !photoBack || !photoInside || !driverId) {
+      console.log("Missing required files or driverId");
       return NextResponse.json(
         {
-          error: "Required files or taxiId not provided",
+          error: "Required files or driverId not provided",
           photoFront: !!photoFront,
           photoBack: !!photoBack,
           photoInside: !!photoInside,
-          taxiId: !!taxiId,
+          driverId: !!driverId,
         },
         { status: 400 }
       );
@@ -87,17 +87,17 @@ export async function PUT(req) {
     const insideUrl = `${supabaseUrl}/storage/v1/object/public/uploads/taxi_pics/inside/${photoInside.name}`;
 
     // Update taxi record in the database
-    await prisma.taxi.update({
-      where: { taxi_id: taxiId },
+    const newTaxi = await prisma.taxi.create({
       data: {
         photo_front_url: frontUrl,
         photo_back_url: backUrl,
         photo_inside_url: insideUrl,
+        driver_id: driverId,
       },
     });
 
-    console.log("Taxi photos updated successfully");
-    return NextResponse.json({ frontUrl, backUrl, insideUrl });
+    console.log("Taxi photos updated successfully", newTaxi);
+    return NextResponse.json({ frontUrl, backUrl, insideUrl, newTaxi });
   } catch (error) {
     console.error("Error processing request:", error);
     return NextResponse.json(
