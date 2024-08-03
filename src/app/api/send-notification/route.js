@@ -7,7 +7,7 @@ const serviceAccount = {
   "type": "service_account",
   "project_id": "fcm-demo-33514",
   "private_key_id": "38fdfa433f2b4b5e42428478cfb86801dcff1f51",
-  "private_key": process.env.SERVICE_ACCOUNT_PRIVATE_KEY,
+  "private_key": process.env.SERVICE_ACCOUNT_PRIVATE_KEY.replace(/\\n/g, '\n'),
   "client_email": "firebase-adminsdk-62pb7@fcm-demo-33514.iam.gserviceaccount.com",
   "client_id": "115094679818171965672",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
