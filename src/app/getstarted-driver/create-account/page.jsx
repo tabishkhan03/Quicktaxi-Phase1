@@ -32,6 +32,14 @@ const Page = () => {
   const Router = useRouter();
   const searchParams = useSearchParams();
   const [driverId, setDriverId] = useState("");
+  const [number,setNumber]=useState("");
+  const [otp,setOtp]=useState("");
+
+  const otpFromChild=(data)=>{
+    setOtp(data);
+  }
+  
+  // console.log("otp code inside page.jsx",otpCode);
 
   useEffect(() => {
     const driver_id = searchParams.get("driverId");
@@ -47,13 +55,16 @@ const Page = () => {
 
   const handleButtonClick = async (performApiCall) => {
     if (performApiCall) {
-      // console.log("performApiCall called");
+      console.log("performApiCall called");
       const { status, data } = await performApiCall(); // Call the provided API function
       console.log(status, data);
     }
     // console.log("button clicked");
     // Move to the next component
     const currentIndex = componentsList.indexOf(currentComponent);
+    if(currentComponent=="finish"){
+      Router.push("/home-driver")
+    }
     if (currentIndex < componentsList.length - 1) {
       const nextComponent = componentsList[currentIndex + 1];
       setComponentHistory((prevHistory) => [...prevHistory, currentComponent]);
@@ -93,6 +104,8 @@ const Page = () => {
             signUpPage={signUpPage}
             handleSignUpChange={handleSignUpChange}
             driverId={driverId}
+            setNumber={setNumber}
+            sendDataToParent={otpFromChild}
           />
         );
       case "otpVerify":
@@ -100,6 +113,9 @@ const Page = () => {
           <OtpVerify
             onButtonClick={() => handleButtonClick(OtpVerify.performApiCall)}
             img={"/driver/otp.PNG"}
+            otpCode={otp}
+            number={number}
+            driverId={driverId}
           />
         );
       case "letsRoll":

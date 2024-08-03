@@ -8,23 +8,30 @@ import { TfiEmail } from "react-icons/tfi";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import useAuth from "../../utils/useAuth"; // Import the custom hook
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 function Sign() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
+  const [customerId, setCustomerId] = useState("");
+  const [isCustomerIdSet, setIsCustomerIdSet] = useState(false);
   const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(true); // State to toggle between sign-up and login
   const { user, loading, error, signUp, logIn, signInWithOAuth } = useAuth(); // Destructure the auth functions
   const router = useRouter();
-
-  const [customerId, setCustomerId] = useState("");
 
   useEffect(() => {
     if (!user) {
       router.push("/sign-in-new");
     }
   }, [user]);
+
+  useEffect(() => {
+    if (customerId) {
+      console.log("is SET customer ID", customerId);
+      setIsCustomerIdSet(true); 
+    }
+  }, [customerId]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -43,22 +50,14 @@ function Sign() {
     console.log("Response from OAuth", response);
     if (response.data.user != null) {
       try {
-        const email = response.data.user.email; // Get email from the response
-        const userId = response.data.user.id; // Get user id from the response
-
         const res = await axios.post("/api/customers/customer-profile", {
-          email: email, // Use the email from the response
+          email: email,
+          password: password,
         });
         console.log(res.data);
 
-        // Store user details in localStorage
-        localStorage.setItem("customer_id", userId);
-        localStorage.setItem("email", email);
-
-        console.log(email);
-
         if (response.data.user.aud === "authenticated") {
-          router.push("/");
+          router.push(`/login?customerId=${customerId}`);
         }
       } catch (error) {
         console.log(error.message);
@@ -81,9 +80,7 @@ function Sign() {
       const response = await logIn(email, password);
       console.log("Response from Auth Login", response);
       if (response.data?.user.aud === "authenticated") {
-        localStorage.setItem("customer_id", response.data.user.id);
-        localStorage.setItem("email", email);
-        router.push("/");
+        router.push(`/login?customerId=${customerId}`);
       }
     }
   };
@@ -100,8 +97,7 @@ function Sign() {
             password,
           });
           console.log(res.data);
-          // Redirect or other actions based on the response
-          router.push(`/customerlogin?customerId=${customerId}`);
+          router.push(`/login?customerId=${customerId}`);
         } catch (error) {
           console.log(error.message);
         }
@@ -110,12 +106,6 @@ function Sign() {
       makeApiCall();
     }
   }, [customerId, email, password]);
-
-  // // Redirect if user is authenticated
-  // if (user) {
-  //   window.location.href = "/home-new";
-  //   return null;
-  // }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -212,27 +202,28 @@ function Sign() {
               <button
                 type="button"
                 onClick={() => handleOAuth("google")}
-                className="text-2xl border p-2 bg-white rounded-full w-12 h-12 shadow-lg shadow-indigo-500/40"
+                className="text-2xl border-2 p-2 rounded-md border-black"
               >
                 <FcGoogle />
               </button>
               <button
                 type="button"
                 onClick={() => handleOAuth("github")}
-                className="text-2xl border p-2 bg-white rounded-full w-12 h-12 text-center shadow-lg shadow-indigo-500/40"
+                className="text-2xl border-2 p-2 rounded-md border-black"
               >
                 <FaGithub />
               </button>
             </div>
-            <p className="font-bold mt-8 text-center">
-              {isSignUp ? "Already have an Account?" : "Don't have an account?"}{" "}
-              <a
-                href="#"
-                className="text-sm text-blue-800 hover:underline mt-4 font-bold"
+            <p className="mt-6 text-sm font-semibold">
+              {isSignUp
+                ? "Already have an account?"
+                : "Don't have an account?"}{" "}
+              <span
+                className="text-blue-800 cursor-pointer"
                 onClick={() => setIsSignUp(!isSignUp)}
               >
-                {isSignUp ? "SIGN IN" : "SIGN UP"}
-              </a>
+                {isSignUp ? "Log in" : "Sign up"}
+              </span>
             </p>
           </div>
         </div>

@@ -1,16 +1,27 @@
 "use client";
 import Head from "next/head";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
+import useAuth from "../../utils/useAuth"; 
 
 const Signin = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [generatedOtp, setGeneratedOtp] = useState("");
   const [otpsent, setOtpSent] = useState(false);
+  const [customerId, setCustomerId] = useState("");
 
+  const { user } = useAuth(); 
+  const searchParams = useSearchParams();
   const router = useRouter();
+
+  useEffect(() => {
+    const customer_id = searchParams.get("customerId");
+    console.log("Customer before setting in state variable:", customer_id);
+    setCustomerId(customer_id);
+    console.log(customer_id);
+  }, [searchParams]);
 
   const handlePhoneNumberChange = (e) => {
     setPhoneNumber(e.target.value);
@@ -26,7 +37,7 @@ const Signin = () => {
     setGeneratedOtp(otpCode);
 
     try {
-      const response = await axios.post("/api/phone_no/verify_otp", {
+      const response = await axios.post("/api/auth/verify-otp", {
         phoneNumber,
         otp: otpCode,
       });
@@ -34,7 +45,6 @@ const Signin = () => {
       localStorage.setItem("phoneNumber", phoneNumber);
       if (response.status === 200) {
         setOtpSent(true);
-        setPhoneNumber("");
         alert("OTP has been sent");
       } else {
         alert(`Failed to send OTP: ${response.data.error}`);
@@ -48,31 +58,35 @@ const Signin = () => {
   const handleOTPSubmit = async (e) => {
     e.preventDefault();
     try {
-      const phoneNumber = localStorage.getItem("phoneNumber");
-      const email = localStorage.getItem("email");
-  
-      if (!phoneNumber || !email) {
-        alert("Phone number or email is missing");
-        return;
-      }
-  
-      const response = await axios.post("/api/phone_no/verify_phone", {
-        phoneNumber: phoneNumber,
-        email: email,
-      });
-  
-      // Handle OTP verification
       if (otp === generatedOtp) {
         setOtp("");
-        router.push("/");
+
+        if (!phoneNumber) {
+          alert("Phone number is missing");
+          return;
+        }
+
+        const response = await axios.post("/api/auth/verify-phone-customer", {
+          phoneNumber: phoneNumber,
+          customer_id: customerId,
+        });
+
+        if (response.status === 200) {
+          alert("Phone number verified successfully");
+          router.push("/");
+        } else {
+          alert("Failed to verify phone number");
+        }
       } else {
         alert("Invalid OTP");
       }
     } catch (error) {
-      console.error(error, { message: "An error has occurred while storing Phone No" });
+      console.error("An error has occurred while storing Phone No", error);
+      alert("An error has occurred while storing Phone No");
     }
   };
-  
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <Head>

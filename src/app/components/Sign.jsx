@@ -13,25 +13,36 @@ const Sign = ({
   handleSignUpChange,
   onButtonClick,
   driverId, // Added driverId as a prop
+  setNumber,
+  sendDataToParent
 }) => {
   const [phoneNumber, setPhoneNumber] = useState(""); // Local state for phone number
   const router = useRouter();
 
-  // const performApiCall = async () => {
-  //   if (signUpPage && phoneNumber) {
-  //     try {
-  //       const response = await axios.put("/api/auth/verify-phone", {
-  //         driverId,
-  //         phoneNumber,
-  //       });
-  //       console.log("API response:", response.data);
-  //       // Redirect or handle success
-  //     } catch (error) {
-  //       console.error("API call failed:", error);
-  //       // Handle error
-  //     }
-  //   }
-  // };
+  const handleCallback=(otpCode)=>{
+    sendDataToParent(otpCode)
+  }
+
+  const performApiCall = async () => {
+    console.log("perfoem api call otp")
+    if (signUpPage && phoneNumber) {
+      try {
+        // const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        setNumber(phoneNumber);
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        handleCallback(otpCode)
+        const response = await axios.post("/api/auth/verify-otp", {
+          phoneNumber,
+          otp: otpCode,
+        });
+        console.log("API response:", response.data);
+        // Redirect or handle success
+      } catch (error) {
+        console.error("API call failed:", error);
+        // Handle error
+      }
+    }
+  };
 
   return (
     <>
@@ -60,7 +71,7 @@ const Sign = ({
           </div>
 
           <input
-            type="number"
+            type="tel"
             className="pl-1 w-[80%] outline-none focus:ring-0"
             placeholder="Type your phone number"
             value={phoneNumber}
@@ -91,7 +102,9 @@ const Sign = ({
             border-radius: 50%;
           }
         `}</style>
-        <ButtonWithArrow name={bttnText} onButtonClick={onButtonClick} />
+        <ButtonWithArrow name={bttnText} onButtonClick={() =>
+          onButtonClick(performApiCall())
+        } />
         <div className="flex flex-row w-full justify-center">
           {signUpPage ? (
             <>
