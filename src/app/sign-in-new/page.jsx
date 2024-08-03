@@ -18,6 +18,8 @@ function Sign() {
   const { user, loading, error, signUp, logIn, signInWithOAuth } = useAuth(); // Destructure the auth functions
   const router = useRouter();
 
+  const [customerId, setCustomerId] = useState("");
+
   useEffect(() => {
     if (!user) {
       router.push("/sign-in-new");
@@ -36,57 +38,6 @@ function Sign() {
     setPassword(e.target.value);
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (isSignUp) {
-  //     console.log("Calling Auth SignUp");
-  //     const response = await signUp(email, password);
-  //     console.log("Response from Auth", response);
-  //     if (response.data.user != null) {
-  //       try {
-  //         const res = await axios.post("/api/customers/customerProfile", {
-  //           email: email,
-  //           password: password,
-  //         });
-  //         console.log(res.data);
-  //         localStorage.setItem("email", email);
-  //       } catch (error) {
-  //         console.log(error.message);s
-  //       }
-  //     }
-  //     if (response.data.user.aud == "authenticated") {
-  //       router.push("/");
-  //     }
-  //   } else {
-  //     console.log("login Called");
-  //     const response = await logIn(email, password);
-  //     console.log("Response from Auth Login", response);
-  //     if (response.data.user.aud == "authenticated") {
-
-  //       localStorage.setItem("customer_id", response.data.user.id);
-  //       localStorage.setItem("email", email);
-  //       router.push("/");
-  //     }
-  //   }
-
-  //   //Calling api to create user in the db
-  // };
-
-  // const handleOAuth = async (provider) => {
-  //   const response = await signInWithOAuth(provider, "customer");
-  //   if (response.data.user != null) {
-  //     try {
-  //       const res = await axios.post("/api/customers/customerProfile", {
-  //         email: email,
-  //         password: password,
-  //       });
-  //       console.log(res.data);
-  //     } catch (error) {
-  //       console.log(error.message);
-  //     }
-  //   }
-  // };
-
   const handleOAuth = async (provider) => {
     const response = await signInWithOAuth(provider, "customer");
     console.log("Response from OAuth", response);
@@ -95,7 +46,7 @@ function Sign() {
         const email = response.data.user.email; // Get email from the response
         const userId = response.data.user.id; // Get user id from the response
 
-        const res = await axios.post("/api/customers/customerProfile", {
+        const res = await axios.post("/api/customers/customer-profile", {
           email: email, // Use the email from the response
         });
         console.log(res.data);
@@ -121,22 +72,9 @@ function Sign() {
       console.log("Calling Auth SignUp");
       const response = await signUp(email, password);
       console.log("Response from Auth", response);
-      if (response.data.user != null) {
-        try {
-          const res = await axios.post("/api/customers/customerProfile", {
-            email: email,
-            password: password,
-          });
-          console.log(res.data);
-          localStorage.setItem("email", email);
-          localStorage.setItem("customer_id", response.data.user.id);
-          console.log(email);
-        } catch (error) {
-          console.log(error.message);
-        }
-        if (response.data.user.aud === "authenticated") {
-          router.push("/");
-        }
+
+      if (response.data?.user) {
+        setCustomerId(response.data.user.id); // Set customerId
       }
     } else {
       console.log("Login Called");
@@ -149,6 +87,29 @@ function Sign() {
       }
     }
   };
+
+  // Watch for customerId change and make API call when customerId is set
+  useEffect(() => {
+    if (customerId) {
+      console.log("Making API call with customerId:", customerId);
+      const makeApiCall = async () => {
+        try {
+          const res = await axios.post("/api/customers/customer-profile", {
+            customer_id: customerId,
+            email,
+            password,
+          });
+          console.log(res.data);
+          // Redirect or other actions based on the response
+          router.push(`/customerlogin?customerId=${customerId}`);
+        } catch (error) {
+          console.log(error.message);
+        }
+      };
+
+      makeApiCall();
+    }
+  }, [customerId, email, password]);
 
   // // Redirect if user is authenticated
   // if (user) {

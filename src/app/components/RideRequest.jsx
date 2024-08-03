@@ -21,9 +21,9 @@ const RideRequest = ({ request }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [driverId,setDriverID]=useState(localStorage.getItem("driver_id"))
+  const [driverId, setDriverID] = useState(localStorage.getItem("driver_id"));
   const { token, notificationPermissionStatus } = useFcmToken();
-  console.log(driverId)
+  console.log(driverId);
   const handleTestNotification = async () => {
     if (!token) {
       console.error("No FCM token available");
@@ -48,28 +48,28 @@ const RideRequest = ({ request }) => {
   const handleAccept = async () => {
     setLoading(true);
     setError(null);
-    console.log("request ",request)
+    console.log("request ", request);
     try {
-    
       // console.log("driver id",driver_id)
       const response = await axios.put("/api/trips/accept-trip", {
         trip_id: request.trip_id,
-        driver_id:driverId,
+        driver_id: driverId,
       });
       if (response.status === 200) {
-
-        handleTestNotification()
+        handleTestNotification();
         // alert("Trip accepted");
 
-        const tripId = request.trip_id; 
-      // const driverId = driver_id;
+        const tripId = request.trip_id;
+        // const driverId = driver_id;
         // router.push("/navigation-driver");
-        router.push(`/navigation-driver?trip_id=${tripId}&driver_id=${driverId}`);
+        router.push(
+          `/navigation-driver?trip_id=${tripId}&driver_id=${driverId}`
+        );
         // router.push({
         //   pathname: '/navigation-driver',
-        //   query: { 
-        //     trip_id: request.trip_id, 
-        //     driver_id: request.driver_id 
+        //   query: {
+        //     trip_id: request.trip_id,
+        //     driver_id: request.driver_id
         //   },
         // });
       } else {

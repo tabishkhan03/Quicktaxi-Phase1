@@ -8,7 +8,8 @@ export async function POST(request) {
     const body = await request.json();
 
     // Basic validation
-    const { email, password } = body;
+    const { email, password, customer_id } = body;
+    console.log("Recieved data: ", email, password, customer_id);
 
     if (!email || !password || password.length < 6) {
       return NextResponse.json({ error: "Invalid input" }, { status: 400 });
@@ -16,6 +17,7 @@ export async function POST(request) {
 
     const newCustomer = await prisma.customer.create({
       data: {
+        customer_id: customer_id,
         email: email,
         password: password,
       },
