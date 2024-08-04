@@ -7,15 +7,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// export const config = {
-//   api: {
-//     bodyParser: false,
-//   },
-// };
-
-export const config = {
-  runtime: "edge",
-};
+export const runtime = "edge";
 
 export async function PUT(req) {
   try {
