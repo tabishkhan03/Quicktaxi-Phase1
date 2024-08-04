@@ -8,7 +8,7 @@ import { MdOutlinePayment } from "react-icons/md";
 import { IoTicketSharp } from "react-icons/io5";
 import axios from "axios";
 import { DriverContext } from "../../../context/DriverContext";
-import {Toaster} from "../../components/notification-ui/Sonner"
+import Toaster from "../../components/notification-ui/Sonner"
 const Cardata = ({ setConfirm, setTripId }) => {
   const { token, notificationPermissionStatus } = useFcmToken()
 
