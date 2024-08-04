@@ -1,6 +1,6 @@
 "use client";
 import Head from "next/head";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import useAuth from "../../utils/useAuth"; 
@@ -88,6 +88,7 @@ const Signin = () => {
 
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <Head>
         <title>Sign In</title>
@@ -156,6 +157,7 @@ const Signin = () => {
         </form>
       </main>
     </div>
+    </Suspense>
   );
 };
 
