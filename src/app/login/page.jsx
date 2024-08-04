@@ -1,6 +1,6 @@
 "use client";
 import Head from "next/head";
-import React, { useState, useEffect,Suspense } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import useAuth from "../../utils/useAuth"; 
@@ -33,132 +33,95 @@ const Signin = () => {
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
-    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedOtp(otpCode);
-
+    console.log("phone", phoneNumber);
+    setOtpSent(true);
     try {
-      const response = await axios.post("/api/auth/verify-otp", {
-        phoneNumber,
-        otp: otpCode,
-      });
-
-      localStorage.setItem("phoneNumber", phoneNumber);
-      if (response.status === 200) {
-        setOtpSent(true);
-        alert("OTP has been sent");
-      } else {
-        alert(`Failed to send OTP: ${response.data.error}`);
-      }
+      const response = await axios.post(
+        "http://localhost:5001/v1/auth/generate-otp",
+        { phoneNumber }
+      );
+      setGeneratedOtp(response.data.otp);
+      console.log(response.data);
+      console.log(response.data.otp);
     } catch (error) {
       console.error(error);
-      alert("An error occurred while sending OTP");
     }
   };
 
-  const handleOTPSubmit = async (e) => {
+  const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    try {
-      if (otp === generatedOtp) {
-        setOtp("");
-
-        if (!phoneNumber) {
-          alert("Phone number is missing");
-          return;
-        }
-
-        const response = await axios.post("/api/auth/verify-phone-customer", {
-          phoneNumber: phoneNumber,
-          customer_id: customerId,
-        });
-
-        if (response.status === 200) {
-          alert("Phone number verified successfully");
-          router.push("/");
-        } else {
-          alert("Failed to verify phone number");
-        }
-      } else {
-        alert("Invalid OTP");
-      }
-    } catch (error) {
-      console.error("An error has occurred while storing Phone No", error);
-      alert("An error has occurred while storing Phone No");
+    if (otp === generatedOtp) {
+      console.log("OTP verified!");
+      router.push("/"); 
+    } else {
+      console.log("Invalid OTP. Please try again.");
     }
   };
-
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <Head>
-        <title>Sign In</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">Let’s Sign in.!</h1>
-
-        <form className="space-y-6">
-          <div>
-            <label
-              htmlFor="phoneNumber"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Phone Number
-            </label>
-            <div className="mt-1 text-black">
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+          <h2 className="text-2xl font-bold mb-6">Sign In</h2>
+          <form>
+            <div className="mb-4">
+              <label htmlFor="phoneNumber" className="block mb-2">
+                Phone Number
+              </label>
               <input
+                type="text"
                 id="phoneNumber"
-                name="phoneNumber"
-                type="tel"
                 value={phoneNumber}
                 onChange={handlePhoneNumberChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border rounded"
               />
             </div>
-          </div>
-
-          {otpsent && (
-            <div>
-              <label
-                htmlFor="otp"
-                className="block text-sm font-medium text-black"
-              >
-                OTP
-              </label>
-              <div className="mt-1 relative text-black">
+            {otpsent && (
+              <div className="mb-4">
+                <label htmlFor="otp" className="block mb-2">
+                  OTP
+                </label>
                 <input
-                  id="otp"
-                  name="otp"
                   type="text"
+                  id="otp"
                   value={otp}
                   onChange={handleOtpChange}
-                  placeholder="Enter OTP"
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  className="w-full px-3 py-2 border rounded"
                 />
               </div>
-            </div>
-          )}
-
-          <div>
-            <button
-              type="submit"
-              onClick={otpsent ? handleOTPSubmit : handleSendOtp}
-              className={`bg.${
-                otpsent ? "green" : "orange"
-              }-500 w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
-              style={{ backgroundColor: otpsent ? "green" : "orange" }}
-            >
-              {otpsent ? "Submit OTP" : "Send OTP"}
-            </button>
-          </div>
-        </form>
-      </main>
-    </div>
+            )}
+            {!otpsent ? (
+              <button
+                type="submit"
+                onClick={handleSendOtp}
+                className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+              >
+                Send OTP
+              </button>
+            ) : (
+              <button
+                type="submit"
+                onClick={handleVerifyOtp}
+                className="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+              >
+                Verify OTP
+              </button>
+            )}
+          </form>
+        </div>
+      </div>
     </Suspense>
   );
 };
 
-export default Signin;
+const Page = () => {
+  const searchParams = useSearchParams();
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Signin searchParams={searchParams} />
+    </Suspense>
+  );
+};
+
+export default Page;
