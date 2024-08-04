@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from "react";
 import { IoChevronForward, IoPerson, IoBusinessOutline } from "react-icons/io5";
 import ButtonWithArrow from "./ButtonWithArrow";
