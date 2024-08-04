@@ -26,7 +26,7 @@ export async function PUT(request) {
     }
 
     const updatedTrip = await prisma.trip.update({
-      where: { trip_id: parseInt(trip_id) },
+      where: { trip_id: trip_id },
       data: { start_time, status: 'started' },
     });
 

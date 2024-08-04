@@ -7,7 +7,7 @@ export async function GET(request, { params }) {
 
   try {
     const driver = await prisma.driver.findUnique({
-      where: { driver_id: parseInt(driver_id) },
+      where: { driver_id: driver_id },
       include: {
         taxis: true,
       },
