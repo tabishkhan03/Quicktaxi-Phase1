@@ -9,8 +9,8 @@ export async function PUT(request) {
 
     const trip = await prisma.trip.findFirst({
       where: {
-        trip_id: parseInt(trip_id),
-        driver_id: parseInt(driver_id),
+        trip_id: trip_id,
+        driver_id: driver_id,
         status: 'started',
       },
     });
