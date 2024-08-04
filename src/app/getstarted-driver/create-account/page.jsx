@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   PrevPage,
@@ -27,19 +27,16 @@ const componentsList = [
   "finish",
 ];
 
-const Page = () => {
+const PageContent = ({ searchParams }) => {
   const [signUpPage, setSignUpPage] = useState(true);
   const Router = useRouter();
-  const searchParams = useSearchParams();
   const [driverId, setDriverId] = useState("");
-  const [number,setNumber]=useState("");
-  const [otp,setOtp]=useState("");
+  const [number, setNumber] = useState("");
+  const [otp, setOtp] = useState("");
 
-  const otpFromChild=(data)=>{
+  const otpFromChild = (data) => {
     setOtp(data);
-  }
-  
-  // console.log("otp code inside page.jsx",otpCode);
+  };
 
   useEffect(() => {
     const driver_id = searchParams.get("driverId");
@@ -59,11 +56,10 @@ const Page = () => {
       const { status, data } = await performApiCall(); // Call the provided API function
       console.log(status, data);
     }
-    // console.log("button clicked");
     // Move to the next component
     const currentIndex = componentsList.indexOf(currentComponent);
-    if(currentComponent=="finish"){
-      Router.push("/home-driver")
+    if (currentComponent === "finish") {
+      Router.push("/home-driver");
     }
     if (currentIndex < componentsList.length - 1) {
       const nextComponent = componentsList[currentIndex + 1];
@@ -220,14 +216,22 @@ const Page = () => {
   };
 
   return (
-    <>
-      <div className="flex items-center justify-center min-h-screen bg-black">
-        <div className="w-full sm:w-[71.6mm] min-h-screen sm:min-h-[147.6mm] max-h-screen sm:max-h-[147.6mm] bg-[rgb(var(--foreground-rgb))] text-black border border-gray-300 bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col items-center justify-between sm:p-8 p-6">
-          <PrevPage name={""} onClick={handlePrevPageClick} />
-          {renderComponent()}
-        </div>
+    <div className="flex items-center justify-center min-h-screen bg-black">
+      <div className="w-full sm:w-[71.6mm] min-h-screen sm:min-h-[147.6mm] max-h-screen sm:max-h-[147.6mm] bg-[rgb(var(--foreground-rgb))] text-black border border-gray-300 bg-white rounded-lg shadow-lg overflow-hidden relative flex flex-col items-center justify-between sm:p-8 p-6">
+        <PrevPage name={""} onClick={handlePrevPageClick} />
+        {renderComponent()}
       </div>
-    </>
+    </div>
+  );
+};
+
+const Page = () => {
+  const searchParams = useSearchParams();
+
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PageContent searchParams={searchParams} />
+    </Suspense>
   );
 };
 
