@@ -11,7 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { useState } from "react";
-import { Toaster } from "./../components/notification-ui/Sonner";
+import  {Toaster}  from "../../components/notification-ui/Sonner";
 
 import useFcmToken from "../../hooks/useFcmToken";
 

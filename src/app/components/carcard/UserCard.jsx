@@ -3,7 +3,7 @@ import { FaCircleDot } from "react-icons/fa6";
 import { GrLocation } from "react-icons/gr";
 import { AppContext } from "../../../context/AppContext";
 import RideConfirmed from "./RideConfirmed";
-import  Toaster  from "../../components/notification-ui/Sonner";
+import  {Toaster}  from "../../components/notification-ui/Sonner";
 import { supabase } from "../../../utils/supabase";
 import useFcmToken from "../../../hooks/useFcmToken";
 import axios from "axios";
