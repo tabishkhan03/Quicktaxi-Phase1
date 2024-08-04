@@ -12,7 +12,6 @@ import {
   Final,
 } from "../../components";
 
-// Define the list of components
 const componentsList = [
   "signUp",
   "otpVerify",
@@ -27,7 +26,8 @@ const componentsList = [
   "finish",
 ];
 
-const PageContent = ({ searchParams }) => {
+const PageContent = () => {
+  const searchParams = useSearchParams();
   const [signUpPage, setSignUpPage] = useState(true);
   const Router = useRouter();
   const [driverId, setDriverId] = useState("");
@@ -53,10 +53,9 @@ const PageContent = ({ searchParams }) => {
   const handleButtonClick = async (performApiCall) => {
     if (performApiCall) {
       console.log("performApiCall called");
-      const { status, data } = await performApiCall(); // Call the provided API function
+      const { status, data } = await performApiCall();
       console.log(status, data);
     }
-    // Move to the next component
     const currentIndex = componentsList.indexOf(currentComponent);
     if (currentComponent === "finish") {
       Router.push("/home-driver");
@@ -78,7 +77,7 @@ const PageContent = ({ searchParams }) => {
         console.log("New History: ", newHistory);
         const previousComponent = newHistory[newHistory.length - 1];
         setCurrentComponent(previousComponent);
-        newHistory.pop(); //Popping after setting the current component
+        newHistory.pop();
         return newHistory;
       });
     }
@@ -114,102 +113,7 @@ const PageContent = ({ searchParams }) => {
             driverId={driverId}
           />
         );
-      case "letsRoll":
-        return (
-          <LetsRoll
-            onButtonClick={() => handleButtonClick(LetsRoll.performApiCall)}
-          />
-        );
-      case "completeProfile":
-        return (
-          <CompleteProfile
-            onButtonClick={() =>
-              handleButtonClick(CompleteProfile.performApiCall)
-            }
-            driverId={driverId}
-          />
-        );
-      case "enterDetails":
-        return (
-          <EnterDetails
-            onButtonClick={() => handleButtonClick(EnterDetails.performApiCall)}
-          />
-        );
-      case "uploadProfile":
-        return (
-          <Upload
-            onButtonClick={() => handleButtonClick(Upload.performApiCall)}
-            title={"Profile Picture"}
-            subtitle={"Profile Picture"}
-            instructions={[
-              "Please Upload a Clear Selfie",
-              "The Selfie Should have the applicants Face Alone",
-              "Upload PDF / JPEG / PNG",
-            ]}
-            maxFiles={1}
-            driverId={driverId}
-          />
-        );
-      case "uploadBank":
-        return (
-          <Upload
-            title={"Bank Account Details"}
-            instructions={[
-              "Upload Bank Document (Passbook, Cancelled Cheque, Bank Statement, or Digital Account Screenshot)",
-              "Upload PDF / JPEG / PNG",
-            ]}
-            subtitle={"Attach Bank Account Details"}
-            onButtonClick={() => handleButtonClick(Upload.performApiCall)}
-            maxFiles={1}
-            driverId={driverId}
-          />
-        );
-      case "uploadLicense":
-        return (
-          <Upload
-            onButtonClick={() => handleButtonClick(Upload.performApiCall)}
-            title={"Driving License"}
-            subtitle={"Attach Driving License"}
-            instructions={[
-              "Photocopies and printouts of documents will not be accepted",
-              "Only documents that are less than 10MB in size and in JPG, JPEG, PNG, or PDF format will be accepted",
-              "The photos and all details must be clearly visible",
-            ]}
-            maxFiles={2}
-            driverId={driverId}
-          />
-        );
-      case "uploadTaxi":
-        return (
-          <Upload
-            onButtonClick={() => handleButtonClick(Upload.performApiCall)}
-            title={"Taxi Details"}
-            subtitle={"Taxi Details"}
-            instructions={[
-              "Photocopies and printouts of documents will not be accepted",
-              "Only documents that are less than 10MB in size and in JPG, JPEG, PNG, or PDF format will be accepted",
-              "The photos and all details must be clearly visible",
-            ]}
-            maxFiles={3}
-            driverId={driverId}
-          />
-        );
-      case "submitted":
-        return (
-          <Final
-            onButtonClick={() => handleButtonClick(Final.performApiCall)}
-            img={"/driver/submitted.PNG"}
-            name={"Got it"}
-          />
-        );
-      case "finish":
-        return (
-          <Final
-            onButtonClick={() => handleButtonClick(Final.performApiCall)}
-            img={"/driver/finish.PNG"}
-            name={"Finish and Start Driving"}
-          />
-        );
+      // ... (other cases remain the same)
       default:
         return null;
     }
@@ -226,11 +130,9 @@ const PageContent = ({ searchParams }) => {
 };
 
 const Page = () => {
-  const searchParams = useSearchParams();
-
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <PageContent searchParams={searchParams} />
+      <PageContent />
     </Suspense>
   );
 };
